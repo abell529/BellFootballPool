@@ -86,7 +86,7 @@ public partial class _2020_00_infocheck : System.Web.UI.Page
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var client = new WebClient { Credentials = new NetworkCredential("f20d8c28-82a4-4740-bbbb-8e66ae", "MYSPORTSFEEDS") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
 
 
         var response = client.DownloadString(urlwk);

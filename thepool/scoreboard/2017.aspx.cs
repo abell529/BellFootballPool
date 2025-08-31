@@ -47,7 +47,7 @@ public partial class scoreboard_2017 : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.ScoresConnectionString;
 
 
         // First connection (for scores.mdb equivalent)

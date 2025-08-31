@@ -83,7 +83,7 @@ public partial class _2018_01_week1_18 : System.Web.UI.Page
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var client = new WebClient { Credentials = new NetworkCredential("shocktor", "1998PlaySF$") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
 
 
         var response = client.DownloadString(urlwk2);

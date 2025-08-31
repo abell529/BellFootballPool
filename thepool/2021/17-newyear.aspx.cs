@@ -90,7 +90,7 @@ public partial class _2021_17_newyear : System.Web.UI.Page
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var client = new WebClient { Credentials = new NetworkCredential("bbd5a2c0-xxxx-xxxx-xxxx-305d0a", "My69Password") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
 
 
         var response = client.DownloadString(urlwk2);
