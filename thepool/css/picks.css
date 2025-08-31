@@ -1,0 +1,394 @@
+﻿#the_games_list {
+    margin-top: 2%;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+}
+
+.the_game {
+    float: left;
+    padding: 0px 0px 7px 0px;
+}
+
+.game_visitor {
+    width: 210px;
+    float: left;
+}
+
+.game_home {
+    width: 210px;
+    float: right;
+}
+
+.visitor_name {
+    text-align: right;
+    width: 175px;
+    float: left;
+}
+
+.visitor_button {
+    float: right;
+    width: 25px;
+}
+
+.home_name {
+    width: 175px;
+    text-align: left;
+    float: right;
+}
+
+.home_button {
+    float: left;
+    width: 25px;
+}
+
+
+.primaryContainer {
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100%;
+    width: 100%;
+    background-color: rgb(21, 32, 62);
+    background-image: url("../img/notebooks2.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: 85.7% 70.1%;
+    background-repeat: no-repeat no-repeat;
+}
+
+#Heading {
+    float: left;
+    height: auto;
+    margin-left: 11.340206%;
+    margin-top: 21px;
+    clear: none;
+    width: 77.405498%;
+    background-color: rgba(255, 255, 255, 0.611765);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    min-height: 0px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+    box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+}
+
+#headingtext {
+    float: left;
+    font-size: 200%;
+    width: 97.116002%;
+    height: auto;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1em;
+    margin-left: 1.536297%;
+    margin-top: 0px;
+    clear: none;
+    min-height: 0px;
+    font-family: arial;
+    padding: 8px;
+}
+
+#Picks {
+    float: left;
+    height: auto;
+    margin-left: 11.340206%;
+    margin-top: 27px;
+    clear: both;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.941176);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+    box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+    border-bottom-right-radius: 17px;
+    border-top-right-radius: 16px;
+}
+
+.Details {
+    height: 210px;
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.901961);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+    box-shadow: rgba(0, 0, 0, 0.592157) 7px 9px 18px 0px;
+}
+
+#Standings {
+    height: auto;
+    margin-left: 0;
+    margin-top: 20px;
+    width: 100%;
+    margin-right: 0%;
+}
+
+#MusicBox {
+    margin-left: 0;
+    height: 44px;
+    margin: 20px;
+    width: 100%;
+}
+
+.detailstext {
+    float: left;
+    font-size: 1em;
+    width: 96.718089%;
+    height: auto;
+    text-align: left;
+    font-weight: normal;
+    line-height: 1em;
+    margin-left: 1.905901%;
+    margin-top: 6px;
+    clear: none;
+    min-height: 191px;
+    padding: 5px;
+}
+
+#standingstext {
+    float: left;
+    font-size: 1em;
+    width: 96.718089%;
+    height: auto;
+    text-align: left;
+    font-weight: normal;
+    line-height: 1em;
+    margin-left: 1.799068%;
+    margin-top: 7.5px;
+    clear: none;
+    min-height: 289px;
+    padding: 5px;
+    margin-right: 0%;
+}
+
+#picksarea {
+    height: auto;
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .primaryContainer {
+        background-image: url("../img/notebooks2.jpg");
+        background-attachment: fixed;
+        -webkit-background-size: auto;
+        background-size: auto;
+        background-color: rgb(21, 32, 62);
+        background-position: 55.4% 70.1%;
+        background-repeat: no-repeat no-repeat;
+    }
+
+    #Heading {
+        height: auto;
+    }
+
+    #MusicBox {
+        margin-top: 246px;
+        margin-left: -22.869873%;
+        clear: none;
+        margin-right: 0%;
+        width: 22.878011%;
+    }
+
+    #Details {
+        margin-top: 27px;
+        margin-left: 2.11792%;
+        clear: none;
+        width: 22.869873%;
+        margin-right: 0%;
+    }
+
+    #Standings {
+        margin-top: 308px;
+        margin-left: -22.878011%;
+        clear: none;
+        width: 22.873942%;
+        margin-right: 0%;
+    }
+
+    #Picks {
+        margin-top: 27px;
+        margin-left: 11.338298%;
+        clear: both;
+        width: 52.408854%;
+    }
+
+    #headingtext {
+        font-size: 150%;
+    }
+}
+
+@media only screen and (max-width: 499px) {
+    #Heading {
+        max-height: none;
+        height: auto;
+    }
+
+    #Picks {
+        margin-top: 17px;
+        margin-left: 11.337891%;
+        clear: both;
+        width: 77.402344%;
+    }
+
+    #MusicBox {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Standings {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Details {
+        margin-top: 18px;
+        margin-right: 0%;
+        margin-left: 11.204427%;
+        clear: both;
+        width: 77.535807%;
+    }
+
+    #headingtext {
+        font-size: 100%;
+    }
+
+    .home_name {
+        width: 175px;
+        text-align: right;
+        float: left;
+    }
+
+    .home_button {
+        float: right;
+        width: 25px;
+    }
+
+    .game_home {
+        width: 210px;
+        float: left;
+    }
+
+    .the_game {
+        float: right;
+        border-bottom: 1px dotted #a0a0a0;
+        padding: 3px 0px 3px 0px;
+    }
+}
+
+@media only screen and (max-width: 979px) and (min-width: 721px) {
+    #Heading {
+        max-height: none;
+        height: auto;
+    }
+
+    #Picks {
+        margin-top: 17px;
+        margin-left: 11.337891%;
+        clear: both;
+        width: 77.402344%;
+    }
+
+    #MusicBox {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Standings {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Details {
+        margin-top: 18px;
+        margin-right: 0%;
+        margin-left: 11.204427%;
+        clear: both;
+        width: 77.535807%;
+    }
+
+    #headingtext {
+        font-size: 100%;
+    }
+
+    .home_name {
+        width: 175px;
+        text-align: right;
+        float: left;
+    }
+
+    .home_button {
+        float: right;
+        width: 25px;
+    }
+
+    .game_home {
+        width: 210px;
+        float: left;
+    }
+
+    .the_game {
+        float: right;
+        border-bottom: 1px dotted #a0a0a0;
+        padding: 3px 0px 3px 0px;
+    }
+}
+
+@media only screen and (max-width: 264px) {
+    #headingtext {
+        font-size: 100%;
+    }
+}
+
+@media only screen and (max-width: 720px) and (min-width: 500px) {
+    #Heading {
+        max-height: none;
+        height: auto;
+    }
+
+    #MusicBox {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Standings {
+        margin-top: 17px;
+        margin-left: 11.409505%;
+        clear: both;
+        width: 77.330729%;
+    }
+
+    #Details {
+        margin-top: 18px;
+        margin-right: 0%;
+        margin-left: 11.204427%;
+        clear: both;
+        width: 77.535807%;
+    }
+
+    #headingtext {
+        font-size: 100%;
+    }
+}
+
+@media only screen and (max-width: 264px) {
+    #headingtext {
+        font-size: 100%;
+    }
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
