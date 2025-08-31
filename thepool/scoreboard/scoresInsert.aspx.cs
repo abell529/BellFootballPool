@@ -94,7 +94,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var client = new WebClient { Credentials = new NetworkCredential("bbd5a2c0-xxxx-xxxx-xxxx-305d0a", "My69Password") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
 
 
         var response = client.DownloadString(urlwk2);
@@ -126,8 +126,8 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         numberofgamescores3 = livescores3.scoreboard.gameScore.Length;
 
 
-        //string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
-        string connectionString2 = "Server=mysql24.ezhostingserver.com;Database=bfpoolDB;User ID=MyName69;Password=ThePassword69;";
+        //string connectionString = CredentialStore.ScoresConnectionString;
+        string connectionString2 = CredentialStore.PoolConnectionString;
 
         // First connection (for scores.mdb equivalent)
         /* MySqlConnection connection = new MySqlConnection(connectionString);
@@ -432,7 +432,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
     public int AllTotals(string theFirst, string theLast)
     {
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.ScoresConnectionString;
 
         MySqlConnection connection = new MySqlConnection(connectionString);
         connection.Open();
@@ -463,7 +463,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         int totalEntries;
         Int32.TryParse(Request.Form["totalEntries"].ToString(), out totalEntries);
 
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.ScoresConnectionString;
         MySqlConnection connection = new MySqlConnection(connectionString);
 
         try

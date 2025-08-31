@@ -89,7 +89,7 @@ public partial class _Default : System.Web.UI.Page
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         // Use SecurityProtocolType.Ssl3 if needed for compatibility reasons
 
-        var client = new WebClient { Credentials = new NetworkCredential("shocktor", "1998PlaySF$") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
         
         var response = client.DownloadString(urlwk1);
         var responselastyear = client.DownloadString(urlts);
@@ -274,7 +274,7 @@ public partial class _Default : System.Web.UI.Page
     protected void SendMail()
     {
         // Gmail Address from where you send the mail
-        var fromAddress = "pool@bellfusion.com";
+        var fromAddress = CredentialStore.EmailAddress;
         // any address where the email will be sending
         var toAddress = emailText;
         var ccAddress = ",jab73@me.com";
@@ -283,7 +283,7 @@ public partial class _Default : System.Web.UI.Page
 
 
         //Password of your gmail address
-        const string fromPassword = "1998PlayPOOL$";
+        var fromPassword = CredentialStore.EmailPassword;
         // Passing the values and make a email formate to display
         string subject = "Week 10 Football Picks";
         string body = "Your picks for week 10: \n\n";
@@ -316,7 +316,7 @@ public partial class _Default : System.Web.UI.Page
         string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20171109-to-20171113";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
         CredentialCache credentialCache = new CredentialCache();
-        credentialCache.Add(new System.Uri(url), "Basic", new NetworkCredential(ConfigurationManager.AppSettings["shocktor"], ConfigurationManager.AppSettings["1998PlaySF$"]));
+        credentialCache.Add(new System.Uri(url), "Basic", CredentialStore.ApiCredential);
         return credentialCache;
     }
 

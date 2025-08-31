@@ -88,7 +88,7 @@ public partial class _2024_16_week16th : System.Web.UI.Page
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var client = new WebClient { Credentials = new NetworkCredential("bbd5a2c0-xxxx-xxxx-xxxx-305d0a", "My69Password") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
 
 
         var response = client.DownloadString(urlwk2);
@@ -116,8 +116,8 @@ public partial class _2024_16_week16th : System.Web.UI.Page
         numberofgamescores2 = livescores2.scoreboard.gameScore.Length;
         numberofgamescores3 = livescores3.scoreboard.gameScore.Length;
 
-        //string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
-        string connectionString2 = "Server=mysql24.ezhostingserver.com;Database=bfpoolDB;User ID=MyName69;Password=ThePassword69;";
+        //string connectionString = CredentialStore.ScoresConnectionString;
+        string connectionString2 = CredentialStore.PoolConnectionString;
 
         // First connection (for scores.mdb equivalent)
         /* MySqlConnection connection = new MySqlConnection(connectionString);

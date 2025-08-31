@@ -90,7 +90,7 @@ public partial class _Default : System.Web.UI.Page
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         // Use SecurityProtocolType.Ssl3 if needed for compatibility reasons
 
-        var client = new WebClient { Credentials = new NetworkCredential("bbd5a2c0-xxxx-xxxx-xxxx-305d0a", "My69Password") };
+        var client = new WebClient { Credentials = CredentialStore.ApiCredential };
         
         var response = client.DownloadString(urlwk1);
         // var responselastyear = client.DownloadString(urlts);
@@ -111,7 +111,7 @@ public partial class _Default : System.Web.UI.Page
 
 
 
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfscoresDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.ScoresConnectionString;
 
         // Establishing MySQL connection
         MySqlConnection connection = new MySqlConnection(connectionString);
@@ -285,7 +285,7 @@ public partial class _Default : System.Web.UI.Page
 
         
 
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfpoolDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.PoolConnectionString;
 
         MySqlConnection connection = new MySqlConnection(connectionString);
 
@@ -343,7 +343,7 @@ public partial class _Default : System.Web.UI.Page
     protected void SendMail()
     {
         // Gmail Address from where you send the mail
-        var fromAddress = "pool@bellfootball.com";
+        var fromAddress = CredentialStore.EmailAddress;
         // any address where the email will be sending
         var toAddress = emailText;
         var ccAddress = ",jab73@me.com";
@@ -352,7 +352,7 @@ public partial class _Default : System.Web.UI.Page
 
 
         //Password of your gmail address
-        const string fromPassword = "1998PlayBFP$";
+        var fromPassword = CredentialStore.EmailPassword;
         // Passing the values and make a email formate to display
         string subject = "Week 18 - 2024 Football Picks";
         string body = firstnameText + " " + lastnameText +" picks for week 18: \n\n";
@@ -385,7 +385,7 @@ public partial class _Default : System.Web.UI.Page
         string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/full_game_schedule.json?date=from-20250104-to-20250105";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
         CredentialCache credentialCache = new CredentialCache();
-        credentialCache.Add(new System.Uri(url), "Basic", new NetworkCredential(ConfigurationManager.AppSettings["bbd5a2c0-db08-41fb-be02-305d0a"], ConfigurationManager.AppSettings["1998PlaySF$"]));
+        credentialCache.Add(new System.Uri(url), "Basic", CredentialStore.ApiCredential);
         return credentialCache;
     }
 

@@ -31,7 +31,7 @@ public partial class _00_removetheextra : System.Web.UI.Page
 
     private void LoadData()
     {
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfpoolDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.PoolConnectionString;
         List<Entry> entries = new List<Entry>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -85,7 +85,7 @@ public partial class _00_removetheextra : System.Web.UI.Page
     [WebMethod]
     public static string DeleteRow(int id)
     {
-        string connectionString = "Server=mysql24.ezhostingserver.com;Database=bfpoolDB;User ID=MyName69;Password=ThePassword69;";
+        string connectionString = CredentialStore.PoolConnectionString;
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
