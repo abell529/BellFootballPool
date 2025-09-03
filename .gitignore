@@ -18,3 +18,7 @@ App_Data/PublishProfiles/
 thepool/App_Data/PublishProfiles/
 website.publishproj
 thepool/website.publishproj
+
+# Sensitive local configs
+thepool/Web.config
+thepool/Web.Debug.config
