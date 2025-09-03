@@ -1,0 +1,20 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build output
+Bin/
+thepool/Bin/
+obj/
+
+# NuGet packages
+packages/
+thepool/packages/
+*.nupkg
+
+# Publish profiles & publish helper
+App_Data/PublishProfiles/
+thepool/App_Data/PublishProfiles/
+website.publishproj
+thepool/website.publishproj
