@@ -11,6 +11,7 @@
     <add key="DbPassword" value="REPLACE_WITH_DB_PASSWORD" />
     <add key="EmailAddress" value="pool@example.com" />
     <add key="EmailPassword" value="REPLACE_WITH_EMAIL_PASSWORD" />
+    <add key="CcAddress" value="cc@example.com" />
   </appSettings>
   <system.web>
     <compilation targetFramework="4.5.2" debug="true">
