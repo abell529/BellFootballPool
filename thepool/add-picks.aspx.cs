@@ -16,7 +16,7 @@ using MySql.Data.MySqlClient;
 
 public partial class add_picks : System.Web.UI.Page
 {
-    public string urlwk1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/full_game_schedule.json?date=from-20241003-to-20241007";
+    public string urlwk1 = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20241003-to-20241007";
     // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-2021-regular/overall_team_standings.json";
 
     public int numberofgames;
@@ -357,13 +357,13 @@ public partial class add_picks : System.Web.UI.Page
         {
             body += showall.fullgameschedule.gameentry[i].awayTeam.Abbreviation + " vs. " + showall.fullgameschedule.gameentry[i].homeTeam.Abbreviation + ": " + gamePicksArray[i] + "\n";
         }
-        body += "\n Picks Link: http://www.bellfootball.com/football/thepool/2024/06-wk6.aspx \n";
+        body += $"\n Picks Link: {CredentialStore.BaseUrl}/football/thepool/2024/06-wk6.aspx \n";
         // body += "Subject: " + YourSubject.Text + "\n";
         // body += "Question: \n" + Comments.Text + "\n";
         // smtp settings
         var smtp = new System.Net.Mail.SmtpClient();
         {
-            smtp.Host = "mail16.ezhostingserver.com";
+            smtp.Host = CredentialStore.SmtpHost;
             smtp.Port = 587;
             smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
             smtp.Credentials = new NetworkCredential(fromAddress, fromPassword);
@@ -376,7 +376,7 @@ public partial class add_picks : System.Web.UI.Page
 
     private CredentialCache GetCredential()
     {
-        string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/full_game_schedule.json?date=from-20241010-to-20241014";
+        string url = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20241010-to-20241014";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
         CredentialCache credentialCache = new CredentialCache();
         credentialCache.Add(new System.Uri(url), "Basic", CredentialStore.ApiCredential);
