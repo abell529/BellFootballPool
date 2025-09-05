@@ -12,6 +12,9 @@
     <add key="EmailAddress" value="pool@example.com" />
     <add key="EmailPassword" value="REPLACE_WITH_EMAIL_PASSWORD" />
     <add key="CcAddress" value="cc@example.com" />
+    <add key="BaseUrl" value="http://www.bellfootball.com" />
+    <add key="ApiBaseUrl" value="https://api.mysportsfeeds.com/v1.1/pull/nfl" />
+    <add key="SmtpHost" value="mail16.ezhostingserver.com" />
   </appSettings>
   <system.web>
     <compilation targetFramework="4.5.2" debug="true">

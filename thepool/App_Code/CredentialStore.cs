@@ -32,6 +32,18 @@ public static class CredentialStore
             Environment.GetEnvironmentVariable("POOL_CC_ADDRESS") ??
             ConfigurationManager.AppSettings["CcAddress"];
 
+        public static string BaseUrl =>
+            Environment.GetEnvironmentVariable("POOL_BASE_URL") ??
+            ConfigurationManager.AppSettings["BaseUrl"];
+
+        public static string ApiBaseUrl =>
+            Environment.GetEnvironmentVariable("POOL_API_BASE_URL") ??
+            ConfigurationManager.AppSettings["ApiBaseUrl"];
+
+        public static string SmtpHost =>
+            Environment.GetEnvironmentVariable("POOL_SMTP_HOST") ??
+            ConfigurationManager.AppSettings["SmtpHost"];
+
         public static NetworkCredential ApiCredential =>
             new NetworkCredential(ApiUsername, ApiPassword);
 
