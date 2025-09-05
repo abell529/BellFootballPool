@@ -21,8 +21,8 @@ using System.Collections.Specialized;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public string urlwk1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20171109-to-20171113";
-    public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-2018-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
+    public string urlwk1 = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20171109-to-20171113";
+    public string urlts = $"{CredentialStore.ApiBaseUrl}/2017-2018-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
     public int numberofgames;
     public int numberofteams;
@@ -77,10 +77,10 @@ public partial class _Default : System.Web.UI.Page
 
         // var listItems = new List<currentstandings>();
         // var client = new WebClient();
-        // var text = client.DownloadString("https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20170907-to-20170910");
+        // var text = client.DownloadString($"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20170907-to-20170910");
         // nflgames showall = JsonConvert.DeserializeObject<nflgames>(text);
         
-        // string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20170907-to-20170911?limit=1";
+        // string url = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20170907-to-20170911?limit=1";
         // WebRequest request = WebRequest.Create(url);
         // request.Credentials = GetCredential();
         // request.PreAuthenticate = true;
@@ -313,7 +313,7 @@ public partial class _Default : System.Web.UI.Page
 
     private CredentialCache GetCredential()
     {
-        string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20171109-to-20171113";
+        string url = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20171109-to-20171113";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
         CredentialCache credentialCache = new CredentialCache();
         credentialCache.Add(new System.Uri(url), "Basic", CredentialStore.ApiCredential);

@@ -16,13 +16,13 @@ using System.Collections.Specialized;
 
 public partial class _2020_17_2020wk17 : System.Web.UI.Page
 {
-    public string urlwk2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-regular/full_game_schedule.json?date=from-20210103-to-20210103";
-    // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2020-regular/full_game_schedule.json?date=from-20210103-to-20210103";
+    // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
-    //public string urlscoreswk1pt1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-regular/scoreboard.json?fordate=20201225";
-    public string urlscoreswk1pt2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-regular/scoreboard.json?fordate=20210103";
-    //public string urlscoreswk1pt3 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-regular/scoreboard.json?fordate=20201228";
-    //public string urlscoreswk1pt4 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-regular/scoreboard.json?fordate=20201226";
+    //public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2020-regular/scoreboard.json?fordate=20201225";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2020-regular/scoreboard.json?fordate=20210103";
+    //public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2020-regular/scoreboard.json?fordate=20201228";
+    //public string urlscoreswk1pt4 = $"{CredentialStore.ApiBaseUrl}/2020-regular/scoreboard.json?fordate=20201226";
 
 
     public int numberofgames;

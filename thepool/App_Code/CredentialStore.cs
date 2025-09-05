@@ -40,6 +40,11 @@ public static class CredentialStore
             Environment.GetEnvironmentVariable("POOL_API_BASE_URL") ??
             ConfigurationManager.AppSettings["ApiBaseUrl"];
 
+        public static string ApiBaseUrlV2 =>
+            Environment.GetEnvironmentVariable("POOL_API_BASE_URL_V2") ??
+            ConfigurationManager.AppSettings["ApiBaseUrlV2"] ??
+            ApiBaseUrl;
+
         public static string SmtpHost =>
             Environment.GetEnvironmentVariable("POOL_SMTP_HOST") ??
             ConfigurationManager.AppSettings["SmtpHost"];

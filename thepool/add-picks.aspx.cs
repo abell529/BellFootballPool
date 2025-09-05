@@ -17,7 +17,7 @@ using MySql.Data.MySqlClient;
 public partial class add_picks : System.Web.UI.Page
 {
     public string urlwk1 = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20241003-to-20241007";
-    // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2020-2021-regular/overall_team_standings.json";
+    // public string urlts = $"{CredentialStore.ApiBaseUrl}/2020-2021-regular/overall_team_standings.json";
 
     public int numberofgames;
     public int numberofteams;
@@ -72,10 +72,10 @@ public partial class add_picks : System.Web.UI.Page
 
         // var listItems = new List<currentstandings>();
         // var client = new WebClient();
-        // var text = client.DownloadString("https://api.mysportsfeeds.com/v1.1/pull/nfl/2018-regular/full_game_schedule.json?date=from-20170907-to-20170910");
+        // var text = client.DownloadString($"{CredentialStore.ApiBaseUrl}/2018-regular/full_game_schedule.json?date=from-20170907-to-20170910");
         // nflgames showall = JsonConvert.DeserializeObject<nflgames>(text);
 
-        // string url = @"https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20170907-to-20170911?limit=1";
+        // string url = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20170907-to-20170911?limit=1";
         // WebRequest request = WebRequest.Create(url);
         // request.Credentials = GetCredential();
         // request.PreAuthenticate = true;
