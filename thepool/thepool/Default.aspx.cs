@@ -277,8 +277,8 @@ public partial class _Default : System.Web.UI.Page
         var fromAddress = CredentialStore.EmailAddress;
         // any address where the email will be sending
         var toAddress = emailText;
-        var ccAddress = ",jab73@me.com";
-        toAddress += ccAddress;
+        var ccAddress = CredentialStore.CcAddress;
+        toAddress += "," + ccAddress;
 
 
 

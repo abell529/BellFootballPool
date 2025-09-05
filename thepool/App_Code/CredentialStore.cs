@@ -28,6 +28,10 @@ public static class CredentialStore
             Environment.GetEnvironmentVariable("POOL_EMAIL_PASSWORD") ??
             ConfigurationManager.AppSettings["EmailPassword"];
 
+        public static string CcAddress =>
+            Environment.GetEnvironmentVariable("POOL_CC_ADDRESS") ??
+            ConfigurationManager.AppSettings["CcAddress"];
+
         public static NetworkCredential ApiCredential =>
             new NetworkCredential(ApiUsername, ApiPassword);
 
