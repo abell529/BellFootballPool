@@ -17,14 +17,14 @@ using MySql.Data.MySqlClient;
 
 public partial class _2024_17_10gamescount : System.Web.UI.Page
 {
-    public string urlwk2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/full_game_schedule.json?date=from-20241225-to-20241230";
-    // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20241225-to-20241230";
+    // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
-    public string urlscoreswk1xmas = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/scoreboard.json?fordate=20241225";
-    public string urlscoreswk1pt1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/scoreboard.json?fordate=20241226";
-    public string urlscoreswk1ptsat = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/scoreboard.json?fordate=20241228";
-    public string urlscoreswk1pt2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/scoreboard.json?fordate=20241229";
-    public string urlscoreswk1pt3 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2024-regular/scoreboard.json?fordate=20241230";
+    public string urlscoreswk1xmas = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241225";
+    public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241226";
+    public string urlscoreswk1ptsat = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241228";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241229";
+    public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241230";
 
 
     public int numberofgames;

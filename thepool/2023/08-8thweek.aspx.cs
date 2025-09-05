@@ -16,12 +16,12 @@ using System.Collections.Specialized;
 
 public partial class _2023_08_8thweek : System.Web.UI.Page
 {
-    public string urlwk2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2023-regular/full_game_schedule.json?date=from-20231026-to-20231030";
-    // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2023-regular/full_game_schedule.json?date=from-20231026-to-20231030";
+    // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
-    public string urlscoreswk1pt1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2023-regular/scoreboard.json?fordate=20231026";
-    public string urlscoreswk1pt2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2023-regular/scoreboard.json?fordate=20231029";
-    public string urlscoreswk1pt3 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2023-regular/scoreboard.json?fordate=20231030";
+    public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2023-regular/scoreboard.json?fordate=20231026";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2023-regular/scoreboard.json?fordate=20231029";
+    public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2023-regular/scoreboard.json?fordate=20231030";
 
 
     public int numberofgames;

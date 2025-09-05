@@ -16,12 +16,12 @@ using System.Collections.Specialized;
 
 public partial class _2017_05_week5 : System.Web.UI.Page
 {
-    public string urlwk2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20171005-to-20171009";
-    // public string urlts = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20171005-to-20171009";
+    // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
-    public string urlscoreswk1pt1 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=20171005";
-    public string urlscoreswk1pt2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=20171008";
-    public string urlscoreswk1pt3 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=20171009";
+    public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2017-regular/scoreboard.json?fordate=20171005";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2017-regular/scoreboard.json?fordate=20171008";
+    public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2017-regular/scoreboard.json?fordate=20171009";
 
 
     public int numberofgames;

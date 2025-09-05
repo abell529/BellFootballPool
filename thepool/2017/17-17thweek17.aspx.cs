@@ -16,11 +16,11 @@ using System.Collections.Specialized;
 
 public partial class _2017_17_17thweek17 : System.Web.UI.Page
 {
-    public string urlwk2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/full_game_schedule.json?date=from-20171231-to-20171231";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2017-regular/full_game_schedule.json?date=from-20171231-to-20171231";
     
 
     
-    public string urlscoreswk1pt2 = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=20171231";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2017-regular/scoreboard.json?fordate=20171231";
     
 
 

@@ -14,6 +14,7 @@
     <add key="CcAddress" value="cc@example.com" />
     <add key="BaseUrl" value="REPLACE_WITH_http://www.website.com" />
     <add key="ApiBaseUrl" value="REPLACE_WITH_https://api.website.com/v1.1/pull/nfl" />
+    <add key="ApiBaseUrlV2" value="REPLACE_WITH_https://api.website.com/v2.1/pull/nfl" />
     <add key="SmtpHost" value="REPLACE_WITH_mail16.website.com" />
   </appSettings>
   <system.web>
