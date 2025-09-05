@@ -2,6 +2,7 @@
 .vs/
 *.user
 *.suo
+*.vs
 
 # Build output
 Bin/
