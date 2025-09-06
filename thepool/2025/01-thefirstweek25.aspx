@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>
-		Week 16 2024 -- BellFusion Football Pool
+		Week 1 2025 -- BellFusion Football Pool
 	</title>
 	
     
@@ -141,7 +141,7 @@
 </head>
 <body>
    
-    <h1>2024 Week 16: BellFusion Football Pool Picks</h1>
+    <h1>2025 Week 1: BellFusion Football Pool Picks</h1>
 <p>
 	Names are listed in alphabetical order (by last name).<br />
     Key: <strong><span class="win">Win</span>, <span class="loss">Loss</span>, <span class="home">Home</span>, <span class="away">Away</span></strong><br />
@@ -361,37 +361,13 @@
                         //}
                     }
 
-                    Response.Write("</div>");
-                    Response.Write("<div class='divTableCell' style = 'background:#ffffff;'>");
-
-                    for (int s = 0; s < livescores2.scoreboard.gameScore.Length; s++)
-                    {
-                        if (showall.fullgameschedule.gameentry[2].id == livescores2.scoreboard.gameScore[s].game.ID)
-                        {
-                            if (game2List[i] == (livescores2.scoreboard.gameScore[s].game.awayTeam.City + " " + livescores2.scoreboard.gameScore[s].game.awayTeam.Name))
-                            {
-                                int x;
-                                int y;
-                                Int32.TryParse(livescores2.scoreboard.gameScore[s].awayScore, out x);
-                                Int32.TryParse(livescores2.scoreboard.gameScore[s].homeScore, out y);
-                                Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[s].game.awayTeam.Abbreviation + "</span>");
-                            }
-                            else
-                            {
-                                int x;
-                                int y;
-                                Int32.TryParse(livescores2.scoreboard.gameScore[s].awayScore, out x);
-                                Int32.TryParse(livescores2.scoreboard.gameScore[s].homeScore, out y);
-                                Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[s].game.homeTeam.Abbreviation + "</span>");
-                            }
-                            break;
-                        }
-                    }
+                    
+                    
 
 
-                    string[] gamePicksList = { game3List[i], game4List[i], game5List[i], game6List[i], game7List[i], game8List[i], game9List[i], game10List[i], game11List[i], game12List[i], game13List[i], game14List[i] };
+                    string[] gamePicksList = { game2List[i], game3List[i], game4List[i], game5List[i], game6List[i], game7List[i], game8List[i], game9List[i], game10List[i], game11List[i], game12List[i], game13List[i], game14List[i] };
 
-                    for (int a = 3; a <= 14; a++)
+                    for (int a = 2; a <= 14; a++)
                     {
                         if (sundayGameIDs.Contains(showall.fullgameschedule.gameentry[a].id))
                         {

@@ -20,24 +20,24 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
     // Copy from weekly cs file below
 
-    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20241225-to-20241230";
+    public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/full_game_schedule.json?date=from-20250104-to-20250105";
     // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
-    public string urlscoreswk1xmas = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241225";
-    public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241226";
-    public string urlscoreswk1ptsat = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241228";
-    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241229";
-    public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241230";
+    //public string urlscoreswk1xmas = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241225";
+    //public string urlscoreswk1pt1 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241226";
+    public string urlscoreswk1ptsat = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20250104";
+    public string urlscoreswk1pt2 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20250105";
+    //public string urlscoreswk1pt3 = $"{CredentialStore.ApiBaseUrl}/2024-regular/scoreboard.json?fordate=20241230";
 
 
     public int numberofgames;
     public int numberofteams;
     public int numberofpeople;
-    public int numberofgamescoresxmas;
-    public int numberofgamescores;
+    //public int numberofgamescoresxmas;
+    //public int numberofgamescores;
     public int numberofgamescoressat;
     public int numberofgamescores2;
-    public int numberofgamescores3;
+    //public int numberofgamescores3;
 
 
     public List<string> theFirstName = new List<string>();
@@ -49,18 +49,29 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     // public PreviousYear lastseason;
     // public Currentstandings livestandings;
 
-    public LiveScoring livescoresxmas;
-    public LiveScoring livescores;
+    //public LiveScoring livescoresxmas;
+    //public LiveScoring livescores;
     public LiveScoring livescoressat;
     public LiveScoring livescores2;
-    public LiveScoring livescores3;
+    //public LiveScoring livescores3;
     // public LiveScoring allscores;
+
+    public List<string> gamePicks = new List<string>();
+
+    public string emailText;
+    public string firstnameText;
+    public string lastnameText;
+    public List<int> totalPicks = new List<int>();
+    public List<string> massiveName = new List<string>();
 
     public List<string> pickFirstName = new List<string>();
     public List<string> pickLastName = new List<string>();
     public List<int> correctPicks = new List<int>();
-    public List<int> totalPicks = new List<int>();
-    public List<string> massiveName = new List<string>();
+
+    public string[] theFirstNamePicks;
+    public string[] theLastNamePicks;
+    public int[] theCorrectPicks;
+    public int[] theTotalPicks;
 
     public List<string> game0Pick = new List<string>();
     public List<string> game1Pick = new List<string>();
@@ -79,10 +90,8 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     public List<string> game14Pick = new List<string>();
     public List<string> game15Pick = new List<string>();
 
-    public string[] theFirstNamePicks;
-    public string[] theLastNamePicks;
-    public int[] theCorrectPicks;
-    public int[] theTotalPicks;
+
+    public List<string> sundayGameIDs = new List<string>();
 
     public string successText;
 
@@ -100,31 +109,30 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         var response = client.DownloadString(urlwk2);
         // var responselastyear = client.DownloadString(urlts);
 
-        var responsescoresxmas = client.DownloadString(urlscoreswk1xmas);
-        var responsescores = client.DownloadString(urlscoreswk1pt1);
+        //var responsescoresxmas = client.DownloadString(urlscoreswk1xmas);
+        //var responsescores = client.DownloadString(urlscoreswk1pt1);
         var responsescoressat = client.DownloadString(urlscoreswk1ptsat);
         var responsescores2 = client.DownloadString(urlscoreswk1pt2);
-        var responsescores3 = client.DownloadString(urlscoreswk1pt3);
+        //var responsescores3 = client.DownloadString(urlscoreswk1pt3);
 
 
         showall = JsonConvert.DeserializeObject<NFLschedule>(response);
         // lastseason = JsonConvert.DeserializeObject<PreviousYear>(responselastyear);
 
-        livescoresxmas = JsonConvert.DeserializeObject<LiveScoring>(responsescoresxmas);
-        livescores = JsonConvert.DeserializeObject<LiveScoring>(responsescores);
+        //livescoresxmas = JsonConvert.DeserializeObject<LiveScoring>(responsescoresxmas);
+        //livescores = JsonConvert.DeserializeObject<LiveScoring>(responsescores);
         livescoressat = JsonConvert.DeserializeObject<LiveScoring>(responsescoressat);
         livescores2 = JsonConvert.DeserializeObject<LiveScoring>(responsescores2);
-        livescores3 = JsonConvert.DeserializeObject<LiveScoring>(responsescores3);
+        //livescores3 = JsonConvert.DeserializeObject<LiveScoring>(responsescores3);
 
         numberofgames = showall.fullgameschedule.gameentry.Length;
         // numberofteams = lastseason.overallteamstandings.teamstandingsentry.Length;
 
-        numberofgamescoresxmas = livescoresxmas.scoreboard.gameScore.Length;
-        numberofgamescores = livescores.scoreboard.gameScore.Length;
+        //numberofgamescoresxmas = livescoresxmas.scoreboard.gameScore.Length;
+        //numberofgamescores = livescores.scoreboard.gameScore.Length;
         numberofgamescoressat = livescoressat.scoreboard.gameScore.Length;
         numberofgamescores2 = livescores2.scoreboard.gameScore.Length;
-        numberofgamescores3 = livescores3.scoreboard.gameScore.Length;
-
+        //numberofgamescores3 = livescores3.scoreboard.gameScore.Length;
 
         //string connectionString = CredentialStore.ScoresConnectionString;
         string connectionString2 = CredentialStore.PoolConnectionString;
@@ -140,7 +148,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         // Second connection (for picks.mdb equivalent)
         MySqlConnection connPicks = new MySqlConnection(connectionString2);
         connPicks.Open();
-        MySqlCommand comPicks = new MySqlCommand("SELECT * FROM `seventeen2024` ORDER BY UPPER(lastname), UPPER(firstname)", connPicks);
+        MySqlCommand comPicks = new MySqlCommand("SELECT * FROM `eighteen2024` ORDER BY UPPER(lastname), UPPER(firstname)", connPicks);
         MySqlDataReader readerPicks = comPicks.ExecuteReader();
 
         while (readerPicks.Read())
@@ -196,82 +204,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     public int ScoringGames(string scoringFirstName, string scoringLastName, string game1, string game2, string game3, string game4, string game5, string game6, string game7, string game8, string game9, string game10, string game11, string game12, string game13, string game14, string game15, string game16)
     {
         int score = 0;
-        if (game1 == (livescoresxmas.scoreboard.gameScore[0].game.awayTeam.City + " " + livescoresxmas.scoreboard.gameScore[0].game.awayTeam.Name))
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[0].awayScore, out x);
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[0].homeScore, out y);
-            score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
-        }
-        else
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[0].awayScore, out x);
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[0].homeScore, out y);
-            score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
-        }
-
-        if (game2 == (livescoresxmas.scoreboard.gameScore[1].game.awayTeam.City + " " + livescoresxmas.scoreboard.gameScore[1].game.awayTeam.Name))
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[1].awayScore, out x);
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[1].homeScore, out y);
-            score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
-        }
-        else
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[1].awayScore, out x);
-            Int32.TryParse(livescoresxmas.scoreboard.gameScore[1].homeScore, out y);
-            score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
-        }
-
-        if (game3 == (livescores.scoreboard.gameScore[0].game.awayTeam.City + " " + livescores.scoreboard.gameScore[0].game.awayTeam.Name))
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescores.scoreboard.gameScore[0].awayScore, out x);
-            Int32.TryParse(livescores.scoreboard.gameScore[0].homeScore, out y);
-            score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
-        }
-        else
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescores.scoreboard.gameScore[0].awayScore, out x);
-            Int32.TryParse(livescores.scoreboard.gameScore[0].homeScore, out y);
-            score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
-        }
-
-        if (game4 == (livescoressat.scoreboard.gameScore[0].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[0].game.awayTeam.Name))
+        if (game1 == (livescoressat.scoreboard.gameScore[0].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[0].game.awayTeam.Name))
         {
             int x;
             int y;
@@ -296,7 +229,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
             //}
         }
 
-        if (game5 == (livescoressat.scoreboard.gameScore[1].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[1].game.awayTeam.Name))
+        if (game2 == (livescoressat.scoreboard.gameScore[1].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[1].game.awayTeam.Name))
         {
             int x;
             int y;
@@ -321,38 +254,13 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
             //}
         }
 
-        if (game6 == (livescoressat.scoreboard.gameScore[2].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[2].game.awayTeam.Name))
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoressat.scoreboard.gameScore[2].awayScore, out x);
-            Int32.TryParse(livescoressat.scoreboard.gameScore[2].homeScore, out y);
-            score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
-        }
-        else
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoressat.scoreboard.gameScore[2].awayScore, out x);
-            Int32.TryParse(livescoressat.scoreboard.gameScore[2].homeScore, out y);
-            score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
-        }
 
 
 
 
 
 
-
-        string[] gamePicks = { game7, game8, game9, game10, game11, game12, game13, game14, game15 };
+        string[] gamePicks = { game3, game4, game5, game6, game7, game8, game9, game10, game11, game12, game13, game14, game15, game16 };
 
         for (int a = 0; a < gamePicks.Length; a++)
         {
@@ -394,33 +302,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
 
 
-        string[] mondaypicks = { game16 };
 
-        for (int i = 0; i < 1; i++)
-        {
-            if (mondaypicks[i] == (livescores3.scoreboard.gameScore[0].game.awayTeam.City + " " + livescores3.scoreboard.gameScore[0].game.awayTeam.Name))
-            {
-                int x;
-                int y;
-                Int32.TryParse(livescores3.scoreboard.gameScore[0].awayScore, out x);
-                Int32.TryParse(livescores3.scoreboard.gameScore[0].homeScore, out y);
-                if (x > y)
-                {
-                    score++;
-                }
-            }
-            else
-            {
-                int x;
-                int y;
-                Int32.TryParse(livescores3.scoreboard.gameScore[0].awayScore, out x);
-                Int32.TryParse(livescores3.scoreboard.gameScore[0].homeScore, out y);
-                if (x < y)
-                {
-                    score++;
-                }
-            }
-        }
 
         return (score);
 
@@ -480,7 +362,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
                 string firstName = Request.Form["firstCorrect" + i].ToString();
                 string lastName = Request.Form["lastCorrect" + i].ToString();
 
-                string query = "UPDATE `2024` SET week17 = @weekCorrect, total = @totalCorrect WHERE firstname = @firstname AND lastname = @lastname";
+                string query = "UPDATE `2024` SET week18 = @weekCorrect, total = @totalCorrect WHERE firstname = @firstname AND lastname = @lastname";
                 //string query = "INSERT INTO `2024` (firstname, lastname, week1, total) VALUES (@firstname, @lastname, @weekCorrect, @totalCorrect)";
 
 

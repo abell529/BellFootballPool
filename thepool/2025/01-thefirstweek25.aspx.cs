@@ -135,7 +135,7 @@ public partial class _2025_01_thefirstweek25 : System.Web.UI.Page
         // Second connection (for picks.mdb equivalent)
         MySqlConnection connPicks = new MySqlConnection(connectionString2);
         connPicks.Open();
-        MySqlCommand comPicks = new MySqlCommand("SELECT * FROM `sixteen2024` ORDER BY UPPER(lastname), UPPER(firstname)", connPicks);
+        MySqlCommand comPicks = new MySqlCommand("SELECT * FROM `one2025` ORDER BY UPPER(lastname), UPPER(firstname)", connPicks);
         MySqlDataReader readerPicks = comPicks.ExecuteReader();
 
 

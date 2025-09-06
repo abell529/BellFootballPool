@@ -163,7 +163,7 @@
               <h1 class="animate__animated animate__fadeInRight animate__slow animate__delay-500ms">
                   
                   
-                  <span>Picks for <strong><br>Week 17 2024</strong></span></h1>
+                  <span>Picks for <strong><br>Week 1 2025</strong></span></h1>
 
 
               <!--<p class="subhead animate__animated animate__fadeIn animate__slower animate__delay-2s">Start making your picks today on the updated site</p>
@@ -185,7 +185,7 @@
                           <form id="form1" runat="server">
                     
 
-                        <!-- <div id="the_games_list">
+                        <div id="the_games_list">
                             
 
                             <% for (int i = 0; i < numberofgames; i++)
@@ -278,14 +278,14 @@
                                     Response.Write("</div>");
                                     Response.Write("</div>");
                                 }
-                             %> -->
+                             %> 
                             
                             <!-- <p>Here: <asp:Label ID="TextBlock" runat="server" Text=""></asp:Label></p>
                                 <p>Here too: <asp:Label ID="TextBlock3" runat="server" Text=""></asp:Label></p>
                                 <asp:TextBox ID="TextBlock2" runat="server"></asp:TextBox> -->
 
                         </div>
-                          <!-- <div class="info-form">
+                          <div class="info-form">
                               
                               <p>
                                   First Name: <asp:TextBox runat="server" type="text" name="firstnameEntry" id="firstnameEntry" />
@@ -303,7 +303,7 @@
                            <p>
                               <asp:Button runat="server" id="SubmitButton" text="Submit Picks" onclick="SubmitForm" />
 
-                    </p> -->
+                    </p>
                     
 
                     <%
@@ -411,7 +411,7 @@
     </div>
     <div id="Standings" class="clearfix">
         <p id="standingstext" style="line-height:20px;">
-            <b>2024 Current Standings</b>
+            <b>2024 Final Standings</b>
             <br /><br />
             <%
                  //for (int i = 0; i < 15; i++)
