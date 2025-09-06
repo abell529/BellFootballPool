@@ -225,10 +225,6 @@ public partial class _2025_01_thefirstweek25 : System.Web.UI.Page
             Int32.TryParse(livescoressat.scoreboard.gameScore[0].awayScore, out x);
             Int32.TryParse(livescoressat.scoreboard.gameScore[0].homeScore, out y);
             score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
         }
         else
         {
@@ -237,44 +233,10 @@ public partial class _2025_01_thefirstweek25 : System.Web.UI.Page
             Int32.TryParse(livescoressat.scoreboard.gameScore[0].awayScore, out x);
             Int32.TryParse(livescoressat.scoreboard.gameScore[0].homeScore, out y);
             score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
         }
 
-        if (game3 == (livescoressat.scoreboard.gameScore[1].game.awayTeam.City + " " + livescoressat.scoreboard.gameScore[1].game.awayTeam.Name))
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoressat.scoreboard.gameScore[1].awayScore, out x);
-            Int32.TryParse(livescoressat.scoreboard.gameScore[1].homeScore, out y);
-            score++;
-            //if (x > y)
-            //{
-            //   score++;
-            //}
-        }
-        else
-        {
-            int x;
-            int y;
-            Int32.TryParse(livescoressat.scoreboard.gameScore[1].awayScore, out x);
-            Int32.TryParse(livescoressat.scoreboard.gameScore[1].homeScore, out y);
-            score++;
-            //if (x < y)
-            //{
-            //    score++;
-            //}
-        }
-
-
-
-
-
-
-
-        string[] gamePicks = { game4, game5, game6, game7, game8, game9, game10, game11, game12, game13, game14, game15 };
+        // Sunday games
+        string[] gamePicks = { game3, game4, game5, game6, game7, game8, game9, game10, game11, game12, game13, game14, game15 };
 
         for (int a = 0; a < gamePicks.Length; a++)
         {
