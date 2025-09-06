@@ -108,6 +108,11 @@ public partial class _2025_01_thefirstweek25 : System.Web.UI.Page
         livescores2 = JsonConvert.DeserializeObject<LiveScoring>(responsescores2);
         livescores3 = JsonConvert.DeserializeObject<LiveScoring>(responsescores3);
 
+        foreach (var score in livescores2.scoreboard.gameScore)
+        {
+            sundayGameIDs.Add(score.game.ID);
+        }
+
         numberofgames = showall.fullgameschedule.gameentry.Length;
         // numberofteams = lastseason.overallteamstandings.teamstandingsentry.Length;
 

@@ -166,8 +166,7 @@
 <div class="divTableCell">&nbsp;</div>
 
         
-            <% 
-                string[] sundayPickGameIDsA = { "134536","134539","134541","134542","134543","134544","134545","134547","134540","134548","134549","134550" };
+            <%
                 for (int i = 0; i < 16; i++)
                 {
                     if (i % 2 == 0)
@@ -199,36 +198,19 @@
                         Response.Write("<div class='tk-ardoise-compact-std light-font smaller-font'>" + showall.fullgameschedule.gameentry[i].homeTeam.City + " <span class='heavy-font'>" + livescoressat.scoreboard.gameScore[1].homeScore + "</span></div>");
                         Response.Write("</div>");
                     }
-                    else if (i > 2 && i < 15 )
+                    else if (i > 2 && i < 15 && sundayGameIDs.Contains(showall.fullgameschedule.gameentry[i].id))
                     {
-                        int b = 0;
-                        while (b < sundayPickGameIDsA.Length)
+                        for (int c = 0; c < livescores2.scoreboard.gameScore.Length; c++)
                         {
-                            if (sundayPickGameIDsA[b] == showall.fullgameschedule.gameentry[i].id)
+                            if (showall.fullgameschedule.gameentry[i].awayTeam.City == livescores2.scoreboard.gameScore[c].game.awayTeam.City)
                             {
-                                for (int c = 0; c < livescores2.scoreboard.gameScore.Length; c++)
-                                {
-                                    if (showall.fullgameschedule.gameentry[i].awayTeam.City == livescores2.scoreboard.gameScore[c].game.awayTeam.City)
-                                    {
-                                        Response.Write("<div class='tk-ardoise-compact-std light-font smaller-font'>" + showall.fullgameschedule.gameentry[i].awayTeam.City + " <span class='heavy-font'>" + livescores2.scoreboard.gameScore[c].awayScore + "</span></div>");
-                                        Response.Write("<div class='tk-ardoise-compact-std regular-font'>vs.</div>");
-                                        Response.Write("<div class='tk-ardoise-compact-std light-font smaller-font'>" + showall.fullgameschedule.gameentry[i].homeTeam.City + " <span class='heavy-font'>" + livescores2.scoreboard.gameScore[c].homeScore + "</span></div>");
-                                        Response.Write("</div>");
-                                        b++;
-                                        break;
-                                    }
-
-                                }
-
-
-                            }
-                            else
-                            {
-                                b++;
+                                Response.Write("<div class='tk-ardoise-compact-std light-font smaller-font'>" + showall.fullgameschedule.gameentry[i].awayTeam.City + " <span class='heavy-font'>" + livescores2.scoreboard.gameScore[c].awayScore + "</span></div>");
+                                Response.Write("<div class='tk-ardoise-compact-std regular-font'>vs.</div>");
+                                Response.Write("<div class='tk-ardoise-compact-std light-font smaller-font'>" + showall.fullgameschedule.gameentry[i].homeTeam.City + " <span class='heavy-font'>" + livescores2.scoreboard.gameScore[c].homeScore + "</span></div>");
+                                Response.Write("</div>");
+                                break;
                             }
                         }
-
-
                     }
                     else
                     {
@@ -426,109 +408,69 @@
 
                     
 
-                    string[] gamePicksList = { game3List[i], game4List[i], game5List[i], game6List[i], game7List[i], game8List[i], game9List[i], game10List[i], game11List[i], game12List[i], game13List[i], game14List[i]   };
-                    string[] sundayPickGameIDs = {  "134536","134539","134541","134542","134543","134544","134545","134547","134540","134548","134549","134550" };
-
-                    bool breakFlag = false;
-
+                    string[] gamePicksList = { game3List[i], game4List[i], game5List[i], game6List[i], game7List[i], game8List[i], game9List[i], game10List[i], game11List[i], game12List[i], game13List[i], game14List[i] };
 
                     for (int a = 3; a <= 14; a++)
                     {
-                        int b = 0;
-                        while (b < 12)
+                        if (sundayGameIDs.Contains(showall.fullgameschedule.gameentry[a].id))
                         {
-                            if (sundayPickGameIDs[b] == showall.fullgameschedule.gameentry[a].id) //livescores2.scoreboard.gameScore[b].game.ID
+                            for (int d = 0; d < livescores2.scoreboard.gameScore.Length; d++)
                             {
-                                int d = 0;
-                                while (d < livescores2.scoreboard.gameScore.Length)
+                                if (showall.fullgameschedule.gameentry[a].id == livescores2.scoreboard.gameScore[d].game.ID)
                                 {
-                                    if (showall.fullgameschedule.gameentry[a].id == livescores2.scoreboard.gameScore[d].game.ID)
+                                    if (a % 2 == 0)
                                     {
-                                        if (a % 2 == 0)
-                                        {
-                                            Response.Write("</div><div class='divTableCell' style = 'background:#ffffff;'>");
-                                        }
-                                        else
-                                        {
-                                            Response.Write("</div><div class='divTableCell' style = 'background:#eae9e5;'>");
-                                        }
-                                        for (int c = 0; c < gamePicksList.Length; c++)
-                                        {
-                                            if (gamePicksList[c] == (livescores2.scoreboard.gameScore[d].game.awayTeam.City + " " + livescores2.scoreboard.gameScore[d].game.awayTeam.Name))
-                                            {
-                                                int x;
-                                                int y;
-                                                Int32.TryParse(livescores2.scoreboard.gameScore[d].awayScore, out x);
-                                                Int32.TryParse(livescores2.scoreboard.gameScore[d].homeScore, out y);
-                                                if (x > y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
-                                                {
-                                                    Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-
-                                                }
-                                                else if (x < y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
-                                                {
-                                                    Response.Write("<span class='loss'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    Response.Write("<span class='away'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-                                                }
-                                            }
-                                            else if (gamePicksList[c] == (livescores2.scoreboard.gameScore[d].game.homeTeam.City + " " + livescores2.scoreboard.gameScore[d].game.homeTeam.Name))
-                                            {
-                                                int x;
-                                                int y;
-                                                Int32.TryParse(livescores2.scoreboard.gameScore[d].awayScore, out x);
-                                                Int32.TryParse(livescores2.scoreboard.gameScore[d].homeScore, out y);
-                                                if (x > y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
-                                                {
-                                                    Response.Write("<span class='loss'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-                                                }
-                                                else if (x < y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
-                                                {
-                                                    Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    Response.Write("<span class='home'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
-                                                    b++;
-                                                    d++;
-                                                    breakFlag = true;
-                                                    break;
-                                                }
-                                            }
-
-                                        }
+                                        Response.Write("</div><div class='divTableCell' style = 'background:#ffffff;'>");
                                     }
                                     else
                                     {
-                                        d++;
+                                        Response.Write("</div><div class='divTableCell' style = 'background:#eae9e5;'>");
                                     }
+                                    for (int c = 0; c < gamePicksList.Length; c++)
+                                    {
+                                        if (gamePicksList[c] == (livescores2.scoreboard.gameScore[d].game.awayTeam.City + " " + livescores2.scoreboard.gameScore[d].game.awayTeam.Name))
+                                        {
+                                            int x;
+                                            int y;
+                                            Int32.TryParse(livescores2.scoreboard.gameScore[d].awayScore, out x);
+                                            Int32.TryParse(livescores2.scoreboard.gameScore[d].homeScore, out y);
+                                            if (x > y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
+                                            {
+                                                Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
+                                            }
+                                            else if (x < y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
+                                            {
+                                                Response.Write("<span class='loss'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
+                                            }
+                                            else
+                                            {
+                                                Response.Write("<span class='away'>" + livescores2.scoreboard.gameScore[d].game.awayTeam.Abbreviation + "</span>");
+                                            }
+                                            break;
+                                        }
+                                        else if (gamePicksList[c] == (livescores2.scoreboard.gameScore[d].game.homeTeam.City + " " + livescores2.scoreboard.gameScore[d].game.homeTeam.Name))
+                                        {
+                                            int x;
+                                            int y;
+                                            Int32.TryParse(livescores2.scoreboard.gameScore[d].awayScore, out x);
+                                            Int32.TryParse(livescores2.scoreboard.gameScore[d].homeScore, out y);
+                                            if (x > y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
+                                            {
+                                                Response.Write("<span class='loss'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
+                                            }
+                                            else if (x < y && (livescores2.scoreboard.gameScore[d].isCompleted == "true"))
+                                            {
+                                                Response.Write("<span class='win'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
+                                            }
+                                            else
+                                            {
+                                                Response.Write("<span class='home'>" + livescores2.scoreboard.gameScore[d].game.homeTeam.Abbreviation + "</span>");
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    break;
                                 }
-                            }
-                            else
-                            {
-                                b++;
                             }
                         }
                     }
