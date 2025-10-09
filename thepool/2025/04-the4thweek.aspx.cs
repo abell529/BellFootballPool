@@ -15,11 +15,8 @@ using System.Data;
 using System.Collections.Specialized;
 using MySql.Data.MySqlClient;
 
-public partial class scoreboard_scoresInsert : System.Web.UI.Page
+public partial class _2025_04_the4thweek : System.Web.UI.Page
 {
-
-    // Copy from weekly cs file below
-
     public string urlwk2 = $"{CredentialStore.ApiBaseUrl}/2025-regular/full_game_schedule.json?date=from-20250925-to-20250929";
     // public string urlts = $"{CredentialStore.ApiBaseUrl}/2016-2017-regular/overall_team_standings.json?teamstats=W,L,T,PF,PA";
 
@@ -47,7 +44,6 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     // public Currentstandings livestandings;
 
     public LiveScoring livescores;
-    public LiveScoring livescoressat;
     public LiveScoring livescores2;
     public LiveScoring livescores3;
     // public LiveScoring allscores;
@@ -57,17 +53,10 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     public string emailText;
     public string firstnameText;
     public string lastnameText;
-    public List<int> totalPicks = new List<int>();
-    public List<string> massiveName = new List<string>();
 
     public List<string> pickFirstName = new List<string>();
     public List<string> pickLastName = new List<string>();
     public List<int> correctPicks = new List<int>();
-
-    public string[] theFirstNamePicks;
-    public string[] theLastNamePicks;
-    public int[] theCorrectPicks;
-    public int[] theTotalPicks;
 
     public List<string> game0Pick = new List<string>();
     public List<string> game1Pick = new List<string>();
@@ -92,10 +81,8 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
     public string successText;
 
 
-
     protected void Page_Load(object sender, EventArgs e)
     {
-
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -103,7 +90,7 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
 
         var response = client.DownloadString(urlwk2);
-        // var responselastyear = client.DownloadString(urlts);
+
 
         var responsescores = client.DownloadString(urlscoreswk1pt1);
         var responsescores2 = client.DownloadString(urlscoreswk1pt2);
@@ -116,6 +103,11 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         livescores = JsonConvert.DeserializeObject<LiveScoring>(responsescores);
         livescores2 = JsonConvert.DeserializeObject<LiveScoring>(responsescores2);
         livescores3 = JsonConvert.DeserializeObject<LiveScoring>(responsescores3);
+
+        foreach (var score in livescores2.scoreboard.gameScore)
+        {
+            sundayGameIDs.Add(score.game.ID);
+        }
 
         numberofgames = showall.fullgameschedule.gameentry.Length;
         // numberofteams = lastseason.overallteamstandings.teamstandingsentry.Length;
@@ -141,14 +133,23 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
         MySqlCommand comPicks = new MySqlCommand("SELECT * FROM `four2025` ORDER BY UPPER(lastname), UPPER(firstname)", connPicks);
         MySqlDataReader readerPicks = comPicks.ExecuteReader();
 
+
+        /*
+        while (reader.Read())
+        {
+            theFirstName.Add(reader["firstname"].ToString());
+            theLastName.Add(reader["lastname"].ToString());
+            theTotal.Add(reader["total"].ToString());
+
+        } */
+
+
+
         while (readerPicks.Read())
         {
             pickFirstName.Add(readerPicks["firstname"].ToString());
             pickLastName.Add(readerPicks["lastname"].ToString());
 
-
-
-            // Copy from weekly cs file below
             game0Pick.Add(readerPicks["game1"].ToString());
             game1Pick.Add(readerPicks["game2"].ToString());
             game2Pick.Add(readerPicks["game3"].ToString());
@@ -169,27 +170,20 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
 
             correctPicks.Add(ScoringGames(readerPicks["firstname"].ToString(), readerPicks["lastname"].ToString(), readerPicks["game1"].ToString(), readerPicks["game2"].ToString(), readerPicks["game3"].ToString(), readerPicks["game4"].ToString(), readerPicks["game5"].ToString(), readerPicks["game6"].ToString(), readerPicks["game7"].ToString(), readerPicks["game8"].ToString(), readerPicks["game9"].ToString(), readerPicks["game10"].ToString(), readerPicks["game11"].ToString(), readerPicks["game12"].ToString(), readerPicks["game13"].ToString(), readerPicks["game14"].ToString(), readerPicks["game15"].ToString(), readerPicks["game16"].ToString()));
-            // Copy from weekly cs file above
-
-
-
-
-            totalPicks.Add(AllTotals(readerPicks["firstname"].ToString(), readerPicks["lastname"].ToString()));
-
 
 
         }
 
 
 
-
+        // Close connections
+        //reader.Close();
+        readerPicks.Close();
+        //connection.Close();
         connPicks.Close();
 
 
     }
-
-
-    // Copy from weekly cs file below
 
     public int ScoringGames(string scoringFirstName, string scoringLastName, string game1, string game2, string game3, string game4, string game5, string game6, string game7, string game8, string game9, string game10, string game11, string game12, string game13, string game14, string game15, string game16)
     {
@@ -295,90 +289,5 @@ public partial class scoreboard_scoresInsert : System.Web.UI.Page
 
     }
 
-    // Copy from weekly cs file above
 
-
-
-    public int AllTotals(string theFirst, string theLast)
-    {
-        string connectionString = CredentialStore.ScoresConnectionString;
-
-        MySqlConnection connection = new MySqlConnection(connectionString);
-        connection.Open();
-
-        string query = "SELECT * FROM `2025` WHERE firstname = @firstname AND lastname = @lastname";
-        MySqlCommand command = new MySqlCommand(query, connection);
-
-        // Using parameters to prevent SQL injection
-        command.Parameters.AddWithValue("@firstname", theFirst.Trim());
-        command.Parameters.AddWithValue("@lastname", theLast.Trim());
-
-        MySqlDataReader reader = command.ExecuteReader();
-
-        int x = -1;
-
-        if (reader.Read())
-        {
-            // Read the "total" value only if the firstname and lastname match
-            x = Convert.ToInt32(reader["total"]);
-        }
-
-        connection.Close();
-        return x;
-    }
-
-    protected void SubmitForm(object sender, EventArgs e)
-    {
-        int totalEntries;
-        Int32.TryParse(Request.Form["totalEntries"].ToString(), out totalEntries);
-
-        string connectionString = CredentialStore.ScoresConnectionString;
-        MySqlConnection connection = new MySqlConnection(connectionString);
-
-        try
-        {
-            connection.Open();
-
-            for (int i = 0; i < totalEntries; i++)
-            {
-                int weekCorrect;
-                Int32.TryParse(Request.Form["weekCorrect" + i].ToString(), out weekCorrect);
-                int totalCorrect;
-                Int32.TryParse(Request.Form["totalCorrect" + i].ToString(), out totalCorrect);
-
-                string firstName = Request.Form["firstCorrect" + i].ToString();
-                string lastName = Request.Form["lastCorrect" + i].ToString();
-
-                string query = "UPDATE `2025` SET week4 = @weekCorrect, total = @totalCorrect WHERE firstname = @firstname AND lastname = @lastname";
-                //string query = "INSERT INTO `2024` (firstname, lastname, week1, total) VALUES (@firstname, @lastname, @weekCorrect, @totalCorrect)";
-
-
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                // Using parameters to prevent SQL injection
-                cmd.Parameters.AddWithValue("@weekCorrect", weekCorrect);
-                cmd.Parameters.AddWithValue("@totalCorrect", totalCorrect);
-                cmd.Parameters.AddWithValue("@firstname", firstName.Trim());
-                cmd.Parameters.AddWithValue("@lastname", lastName.Trim());
-
-                cmd.ExecuteNonQuery();
-            }
-
-            successText = "Data saved successfully!";
-        }
-        catch (Exception ex)
-        {
-            successText = "Failed due to: " + ex.Message;
-        }
-        finally
-        {
-            connection.Close();
-        }
-
-    }
 }
-
-
-
-
- 

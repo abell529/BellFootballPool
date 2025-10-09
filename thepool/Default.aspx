@@ -163,7 +163,7 @@
               <h1 class="animate__animated animate__fadeInRight animate__slow animate__delay-500ms">
                   
                   
-                  <span>Picks for <strong><br>Week 1 2025</strong></span></h1>
+                  <span>Picks for <strong><br>Week 4 2025</strong></span></h1>
 
 
               <!--<p class="subhead animate__animated animate__fadeIn animate__slower animate__delay-2s">Start making your picks today on the updated site</p>
@@ -411,7 +411,7 @@
     </div>
     <div id="Standings" class="clearfix">
         <p id="standingstext" style="line-height:20px;">
-            <b>2024 Final Standings</b>
+            <b>2025 Current Standings</b>
             <br /><br />
             <%
                  //for (int i = 0; i < 15; i++)
