@@ -199,6 +199,13 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
         }
     }
 
+    private static readonly DayOfWeek[] AutoWinDays =
+    {
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday
+    };
+
     private int CalculateScore(IReadOnlyList<string> picks)
     {
         int score = 0;
@@ -219,6 +226,12 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
             var pick = (picks[i] ?? string.Empty).Trim();
             if (string.IsNullOrEmpty(pick))
             {
+                continue;
+            }
+
+            if (IsAutoWinGame(scheduleEntry))
+            {
+                score++;
                 continue;
             }
 
@@ -261,6 +274,8 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
         bool pickedAway = string.Equals(trimmedPick, awayName, StringComparison.OrdinalIgnoreCase);
         bool pickedHome = string.Equals(trimmedPick, homeName, StringComparison.OrdinalIgnoreCase);
 
+        bool autoWin = IsAutoWinGame(scheduleEntry) && !string.IsNullOrEmpty(trimmedPick);
+
         var pickResult = new PickResult
         {
             RawPick = trimmedPick,
@@ -276,6 +291,12 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
         int awayScore = ParseScore(gameScore.awayScore);
         int homeScore = ParseScore(gameScore.homeScore);
         bool isCompleted = string.Equals(gameScore.isCompleted, "true", StringComparison.OrdinalIgnoreCase);
+
+        if (autoWin && isCompleted)
+        {
+            pickResult.CssClass = "win";
+            return pickResult;
+        }
 
         if (pickedAway)
         {
@@ -371,6 +392,17 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
     private static string GetTeamFullName(nflgames.Hometeam team)
     {
         return team == null ? string.Empty : $"{team.City} {team.Name}".Trim();
+    }
+
+    private static bool IsAutoWinGame(Gameentry scheduleEntry)
+    {
+        var gameDate = ParseDate(scheduleEntry?.date);
+        if (!gameDate.HasValue)
+        {
+            return false;
+        }
+
+        return AutoWinDays.Contains(gameDate.Value.DayOfWeek);
     }
 
     public class DayGroup
