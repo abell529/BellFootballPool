@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Web.UI;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -83,18 +82,9 @@ public partial class _2025_06_sixthwk : Page
                 DayName = group.Key.ToString("dddd", CultureInfo.InvariantCulture)
             };
 
-            var scoresForDate = GetScoresForDate(client, group.Key);
-            foreach (var score in scoresForDate)
-            {
-                if (!string.IsNullOrEmpty(score?.game?.ID))
-                {
-                    _scoresByGameId[score.game.ID] = score;
-                }
-            }
-
             foreach (var item in group.OrderBy(x => x.Entry.time))
             {
-                _scoresByGameId.TryGetValue(item.Entry.id, out var score);
+                var score = FindGameScore(client, item.Entry, group.Key);
                 dayGroup.Games.Add(new GameDisplay(item.Entry, score));
             }
 
@@ -104,12 +94,14 @@ public partial class _2025_06_sixthwk : Page
 
     private IReadOnlyList<Gamescore> GetScoresForDate(WebClient client, DateTime date)
     {
-        if (_scoresByDate.TryGetValue(date, out var cached))
+        var dateKey = date.Date;
+
+        if (_scoresByDate.TryGetValue(dateKey, out var cached))
         {
             return cached;
         }
 
-        var formattedDate = date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+        var formattedDate = dateKey.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         var url = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/scoreboard.json?fordate={formattedDate}";
 
         try
@@ -117,14 +109,48 @@ public partial class _2025_06_sixthwk : Page
             var response = client.DownloadString(url);
             var scoreboard = JsonConvert.DeserializeObject<LiveScoring>(response);
             var games = scoreboard?.scoreboard?.gameScore?.Where(g => g?.game?.ID != null).ToList() ?? new List<Gamescore>();
-            _scoresByDate[date] = games;
+            _scoresByDate[dateKey] = games;
             return games;
         }
         catch (WebException)
         {
-            _scoresByDate[date] = new List<Gamescore>();
-            return _scoresByDate[date];
+            _scoresByDate[dateKey] = new List<Gamescore>();
+            return _scoresByDate[dateKey];
         }
+    }
+
+    private Gamescore FindGameScore(WebClient client, Gameentry entry, DateTime scheduledDate)
+    {
+        if (entry == null || string.IsNullOrWhiteSpace(entry.id))
+        {
+            return null;
+        }
+
+        if (_scoresByGameId.TryGetValue(entry.id, out var cached))
+        {
+            return cached;
+        }
+
+        var baseDate = scheduledDate.Date;
+        var searchOffsets = new int[ScoreboardSearchOffsets.Length + 1];
+        searchOffsets[0] = 0;
+        Array.Copy(ScoreboardSearchOffsets, 0, searchOffsets, 1, ScoreboardSearchOffsets.Length);
+
+        foreach (var offset in searchOffsets)
+        {
+            var targetDate = baseDate.AddDays(offset);
+            var scores = GetScoresForDate(client, targetDate);
+            var match = scores.FirstOrDefault(g => string.Equals(g?.game?.ID, entry.id, StringComparison.OrdinalIgnoreCase));
+
+            if (match != null)
+            {
+                _scoresByGameId[entry.id] = match;
+                return match;
+            }
+        }
+
+        _scoresByGameId[entry.id] = null;
+        return null;
     }
 
     private void LoadParticipants()
@@ -310,9 +336,23 @@ public partial class _2025_06_sixthwk : Page
             return null;
         }
 
-        if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed))
+        var trimmed = value.Trim();
+        bool hasTimeComponent = trimmed.IndexOf('T') >= 0 || trimmed.IndexOf(':') >= 0;
+
+        if (hasTimeComponent && DateTimeOffset.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeUniversal, out var parsedOffset))
         {
-            return parsed;
+            var eastern = TimeZoneInfo.ConvertTime(parsedOffset, EasternTimeZone);
+            return eastern.DateTime;
+        }
+
+        if (DateTime.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsedInvariant))
+        {
+            return parsedInvariant;
+        }
+
+        if (DateTime.TryParse(trimmed, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AllowWhiteSpaces, out var parsedUs))
+        {
+            return parsedUs;
         }
 
         return null;
@@ -351,8 +391,13 @@ public partial class _2025_06_sixthwk : Page
         public Gameentry Schedule { get; }
         public Gamescore Score { get; }
 
-        public string AwayScore => !string.IsNullOrWhiteSpace(Score?.awayScore) ? Score.awayScore : "–";
-        public string HomeScore => !string.IsNullOrWhiteSpace(Score?.homeScore) ? Score.homeScore : "–";
+        public string AwayScore => FormatScore(Score?.awayScore);
+        public string HomeScore => FormatScore(Score?.homeScore);
+
+        private static string FormatScore(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? "-" : value.Trim();
+        }
     }
 
     public class ParticipantRow
@@ -371,5 +416,26 @@ public partial class _2025_06_sixthwk : Page
         public string Abbreviation { get; set; }
         public string CssClass { get; set; }
         public string DisplayText => !string.IsNullOrWhiteSpace(Abbreviation) ? Abbreviation : string.IsNullOrWhiteSpace(RawPick) ? " " : RawPick;
+    }
+
+    private static TimeZoneInfo InitializeEasternTimeZone()
+    {
+        var timeZoneIds = new[] { "Eastern Standard Time", "America/New_York" };
+
+        foreach (var id in timeZoneIds)
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(id);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+            }
+            catch (InvalidTimeZoneException)
+            {
+            }
+        }
+
+        return TimeZoneInfo.Utc;
     }
 }
