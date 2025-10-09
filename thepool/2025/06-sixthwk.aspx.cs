@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Web.UI;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -26,6 +27,10 @@ public partial class _2025_06_sixthwk : Page
 
     private readonly Dictionary<string, Gamescore> _scoresByGameId = new Dictionary<string, Gamescore>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<DateTime, IReadOnlyList<Gamescore>> _scoresByDate = new Dictionary<DateTime, IReadOnlyList<Gamescore>>();
+    private readonly List<GameDisplay> _orderedGames = new List<GameDisplay>();
+
+    private static readonly int[] ScoreboardSearchOffsets = new[] { -1, 1, -2, 2 };
+    private static readonly TimeZoneInfo EasternTimeZone = InitializeEasternTimeZone();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -51,60 +56,122 @@ public partial class _2025_06_sixthwk : Page
 
     private void BuildDayGroups(WebClient client)
     {
+        DayGroups.Clear();
+        _orderedGames.Clear();
+        _scoresByGameId.Clear();
+        _scoresByDate.Clear();
+
         if (Schedule?.fullgameschedule?.gameentry == null)
         {
+            NumberOfGames = 0;
             return;
         }
 
-        var entriesWithDate = Schedule.fullgameschedule.gameentry
-            .Select(entry => new
+        var games = Schedule.fullgameschedule.gameentry
+            .Select((entry, index) =>
             {
-                Entry = entry,
-                Date = ParseDate(entry.date)
+                var displayDate = ParseDate(entry.date, entry.time) ?? DateTime.MinValue;
+                var startTime = ParseGameTime(entry.time);
+
+                return new GameDisplay(entry, index)
+                {
+                    DisplayDate = displayDate,
+                    StartTime = startTime
+                };
             })
-            .Where(x => x.Date.HasValue)
-            .Select(x => new
-            {
-                x.Entry,
-                Date = x.Date.Value.Date
-            })
+            .OrderBy(g => g.DisplayDate)
+            .ThenBy(g => g.StartTime ?? TimeSpan.MaxValue)
+            .ThenBy(g => g.Index)
             .ToList();
 
-        foreach (var group in entriesWithDate.GroupBy(x => x.Date).OrderBy(g => g.Key))
+        if (games.Count == 0)
+        {
+            NumberOfGames = 0;
+            return;
+        }
+
+        foreach (var date in games.Select(g => g.DisplayDate).Where(IsValidDate).Select(d => d.Date).Distinct())
+        {
+            CacheScores(client, date);
+        }
+
+        foreach (var game in games)
+        {
+            if (!_scoresByGameId.TryGetValue(game.Schedule.id, out var score))
+            {
+                foreach (var offset in ScoreboardSearchOffsets)
+                {
+                    if (!IsValidDate(game.DisplayDate))
+                    {
+                        continue;
+                    }
+
+                    var targetDate = game.DisplayDate.Date.AddDays(offset);
+                    if (!IsValidDate(targetDate))
+                    {
+                        continue;
+                    }
+
+                    CacheScores(client, targetDate);
+
+                    if (_scoresByGameId.TryGetValue(game.Schedule.id, out score))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (score != null)
+            {
+                game.AttachScore(score);
+            }
+        }
+
+        games = games
+            .OrderBy(g => g.DisplayDate)
+            .ThenBy(g => g.StartTime ?? TimeSpan.MaxValue)
+            .ThenBy(g => g.Index)
+            .ToList();
+
+        foreach (var group in games
+            .GroupBy(g => IsValidDate(g.DisplayDate) ? g.DisplayDate.Date : DateTime.MinValue)
+            .OrderBy(g => g.Key))
         {
             var dayGroup = new DayGroup
             {
                 Date = group.Key,
-                DayName = group.Key.ToString("dddd", CultureInfo.InvariantCulture)
+                DayName = IsValidDate(group.Key)
+                    ? group.Key.ToString("dddd", CultureInfo.InvariantCulture)
+                    : "TBD"
             };
 
-            var scoresForDate = GetScoresForDate(client, group.Key);
-            foreach (var score in scoresForDate)
-            {
-                if (!string.IsNullOrEmpty(score?.game?.ID))
-                {
-                    _scoresByGameId[score.game.ID] = score;
-                }
-            }
-
-            foreach (var item in group.OrderBy(x => x.Entry.time))
-            {
-                _scoresByGameId.TryGetValue(item.Entry.id, out var score);
-                dayGroup.Games.Add(new GameDisplay(item.Entry, score));
-            }
+            dayGroup.Games.AddRange(group
+                .OrderBy(g => g.DisplayDate)
+                .ThenBy(g => g.StartTime ?? TimeSpan.MaxValue)
+                .ThenBy(g => g.Index));
 
             DayGroups.Add(dayGroup);
         }
+
+        _orderedGames.AddRange(games);
+        NumberOfGames = _orderedGames.Count;
     }
 
-    private IReadOnlyList<Gamescore> GetScoresForDate(WebClient client, DateTime date)
+    private IReadOnlyList<Gamescore> CacheScores(WebClient client, DateTime date)
     {
-        if (_scoresByDate.TryGetValue(date, out var cached))
+        if (!IsValidDate(date))
+        {
+            return Array.Empty<Gamescore>();
+        }
+
+        var normalized = date.Date;
+
+        if (_scoresByDate.TryGetValue(normalized, out var cached))
         {
             return cached;
         }
 
-        var formattedDate = date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+        var formattedDate = normalized.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         var url = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/scoreboard.json?fordate={formattedDate}";
 
         try
@@ -112,13 +179,23 @@ public partial class _2025_06_sixthwk : Page
             var response = client.DownloadString(url);
             var scoreboard = JsonConvert.DeserializeObject<LiveScoring>(response);
             var games = scoreboard?.scoreboard?.gameScore?.Where(g => g?.game?.ID != null).ToList() ?? new List<Gamescore>();
-            _scoresByDate[date] = games;
+
+            _scoresByDate[normalized] = games;
+
+            foreach (var score in games)
+            {
+                if (!string.IsNullOrEmpty(score?.game?.ID))
+                {
+                    _scoresByGameId[score.game.ID] = score;
+                }
+            }
+
             return games;
         }
         catch (WebException)
         {
-            _scoresByDate[date] = new List<Gamescore>();
-            return _scoresByDate[date];
+            _scoresByDate[normalized] = new List<Gamescore>();
+            return _scoresByDate[normalized];
         }
     }
 
@@ -154,9 +231,16 @@ public partial class _2025_06_sixthwk : Page
                         var pickValue = HasColumn(reader, columnName) ? reader[columnName].ToString() : string.Empty;
                         picks.Add(pickValue);
 
-                        var scheduleEntry = Schedule.fullgameschedule.gameentry[i];
-                        _scoresByGameId.TryGetValue(scheduleEntry.id, out var gameScore);
-                        participant.Picks.Add(BuildPickResult(pickValue, scheduleEntry, gameScore));
+                        if (i < _orderedGames.Count)
+                        {
+                            var scheduleEntry = _orderedGames[i].Schedule;
+                            _scoresByGameId.TryGetValue(scheduleEntry.id, out var gameScore);
+                            participant.Picks.Add(BuildPickResult(pickValue, scheduleEntry, gameScore));
+                        }
+                        else
+                        {
+                            participant.Picks.Add(new PickResult { RawPick = pickValue });
+                        }
                     }
 
                     participant.WeeklyScore = CalculateScore(picks);
@@ -174,7 +258,12 @@ public partial class _2025_06_sixthwk : Page
 
         for (int i = 0; i < picks.Count && i < NumberOfGames; i++)
         {
-            var scheduleEntry = Schedule.fullgameschedule.gameentry[i];
+            if (i >= _orderedGames.Count)
+            {
+                break;
+            }
+
+            var scheduleEntry = _orderedGames[i].Schedule;
             if (!_scoresByGameId.TryGetValue(scheduleEntry.id, out var gameScore))
             {
                 continue;
@@ -298,26 +387,51 @@ public partial class _2025_06_sixthwk : Page
         }
     }
 
-    private static DateTime? ParseDate(string value)
+    private static DateTime? ParseDate(string value, string time = null)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (TryParseWithTimeZone(value, time, out var parsed))
         {
-            return null;
-        }
-
-        var datePortion = value.Length >= 10 ? value.Substring(0, 10) : value;
-
-        if (DateTime.TryParseExact(datePortion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-        {
-            return parsedDate;
-        }
-
-        if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
-        {
-            return parsed.Date;
+            return parsed;
         }
 
         return null;
+    }
+
+    private static bool TryParseWithTimeZone(string dateValue, string timeValue, out DateTime parsed)
+    {
+        parsed = default;
+
+        if (string.IsNullOrWhiteSpace(dateValue))
+        {
+            return false;
+        }
+
+        string candidate = dateValue.Trim();
+        if (candidate.Length <= 10 && !string.IsNullOrWhiteSpace(timeValue))
+        {
+            candidate = $"{candidate} {timeValue.Trim()}";
+        }
+
+        if (DateTimeOffset.TryParse(candidate, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dto))
+        {
+            parsed = ConvertToEasternDate(dto).Date;
+            return true;
+        }
+
+        if (DateTime.TryParse(candidate, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var dt))
+        {
+            parsed = dt.Date;
+            return true;
+        }
+
+        var datePortion = candidate.Length >= 10 ? candidate.Substring(0, 10) : candidate;
+        if (DateTime.TryParseExact(datePortion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var exact))
+        {
+            parsed = exact.Date;
+            return true;
+        }
+
+        return false;
     }
 
     private static int ParseScore(string value)
@@ -329,15 +443,80 @@ public partial class _2025_06_sixthwk : Page
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return "\u00A0";
+            return string.Empty;
         }
 
-        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+        var trimmed = value.Trim();
+        if (trimmed == "-" || trimmed == "–" || trimmed == "—")
+        {
+            return string.Empty;
+        }
+
+        if (int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
         {
             return parsed.ToString(CultureInfo.InvariantCulture);
         }
 
-        return value.Trim();
+        return trimmed;
+    }
+
+    private static TimeSpan? ParseGameTime(string timeValue)
+    {
+        if (string.IsNullOrWhiteSpace(timeValue))
+        {
+            return null;
+        }
+
+        var formats = new[] { "h:mm tt", "hh:mm tt", "h:mm:ss tt", "hh:mm:ss tt" };
+        if (DateTime.TryParseExact(timeValue.Trim(), formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsed))
+        {
+            return parsed.TimeOfDay;
+        }
+
+        if (DateTime.TryParse(timeValue, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out parsed))
+        {
+            return parsed.TimeOfDay;
+        }
+
+        return null;
+    }
+
+    private static bool IsValidDate(DateTime date)
+    {
+        return date.Year > 1900;
+    }
+
+    private static DateTime ConvertToEasternDate(DateTimeOffset dto)
+    {
+        if (EasternTimeZone != null)
+        {
+            return TimeZoneInfo.ConvertTime(dto, EasternTimeZone);
+        }
+
+        return dto.LocalDateTime;
+    }
+
+    private static TimeZoneInfo InitializeEasternTimeZone()
+    {
+        string[] candidates = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? new[] { "Eastern Standard Time" }
+            : new[] { "America/New_York", "US/Eastern" };
+
+        foreach (var id in candidates)
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(id);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+            }
+            catch (InvalidTimeZoneException)
+            {
+            }
+        }
+
+        return null;
     }
 
     private static string GetTeamFullName(nflgames.Awayteam team)
@@ -359,17 +538,39 @@ public partial class _2025_06_sixthwk : Page
 
     public class GameDisplay
     {
-        public GameDisplay(Gameentry schedule, Gamescore score)
+        public GameDisplay(Gameentry schedule, int index)
         {
             Schedule = schedule;
-            Score = score;
+            Index = index;
         }
 
         public Gameentry Schedule { get; }
-        public Gamescore Score { get; }
+        public int Index { get; }
+        public Gamescore Score { get; private set; }
+        public DateTime DisplayDate { get; set; }
+        public TimeSpan? StartTime { get; set; }
 
         public string AwayScore => FormatScoreDisplay(Score?.awayScore);
         public string HomeScore => FormatScoreDisplay(Score?.homeScore);
+
+        public void AttachScore(Gamescore score)
+        {
+            Score = score;
+
+            if (score?.game != null)
+            {
+                var scoreboardDate = ParseDate(score.game.date, score.game.time);
+                if (scoreboardDate.HasValue)
+                {
+                    DisplayDate = scoreboardDate.Value;
+                }
+
+                if (!StartTime.HasValue)
+                {
+                    StartTime = ParseGameTime(score.game.time);
+                }
+            }
+        }
     }
 
     public class ParticipantRow
