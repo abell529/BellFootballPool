@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Web.UI;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -26,6 +27,10 @@ public partial class _2025_06_sixthwk : Page
 
     private readonly Dictionary<string, Gamescore> _scoresByGameId = new Dictionary<string, Gamescore>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<DateTime, IReadOnlyList<Gamescore>> _scoresByDate = new Dictionary<DateTime, IReadOnlyList<Gamescore>>();
+    private readonly List<GameDisplay> _orderedGames = new List<GameDisplay>();
+
+    private static readonly int[] ScoreboardSearchOffsets = new[] { -1, 1, -2, 2 };
+    private static readonly TimeZoneInfo EasternTimeZone = InitializeEasternTimeZone();
 
     protected void Page_Load(object sender, EventArgs e)
     {
