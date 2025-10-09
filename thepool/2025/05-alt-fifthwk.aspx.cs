@@ -1,20 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Web.UI;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using nflgames;
 using livescoring;
 
-public partial class _2025_06_sixthwk : Page
+public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
 {
     private const string SeasonSegment = "2025-regular";
 
-    public string ScheduleUrl = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/full_game_schedule.json?date=from-20251009-to-20251013";
+    public string ScheduleUrl = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/full_game_schedule.json?date=from-20251002-to-20251006";
 
     public NFLschedule Schedule { get; private set; }
     public List<DayGroup> DayGroups { get; } = new List<DayGroup>();
@@ -27,10 +26,6 @@ public partial class _2025_06_sixthwk : Page
 
     private readonly Dictionary<string, Gamescore> _scoresByGameId = new Dictionary<string, Gamescore>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<DateTime, IReadOnlyList<Gamescore>> _scoresByDate = new Dictionary<DateTime, IReadOnlyList<Gamescore>>();
-    private readonly List<GameDisplay> _orderedGames = new List<GameDisplay>();
-
-    private static readonly int[] ScoreboardSearchOffsets = new[] { -1, 1, -2, 2 };
-    private static readonly TimeZoneInfo EasternTimeZone = InitializeEasternTimeZone();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -139,7 +134,7 @@ public partial class _2025_06_sixthwk : Page
         using (var conn = new MySqlConnection(connectionString))
         {
             conn.Open();
-            var commandText = "SELECT * FROM `six2025` ORDER BY UPPER(lastname), UPPER(firstname)";
+            var commandText = "SELECT * FROM `five2025` ORDER BY UPPER(lastname), UPPER(firstname)";
             using (var command = new MySqlCommand(commandText, conn))
             using (var reader = command.ExecuteReader())
             {
