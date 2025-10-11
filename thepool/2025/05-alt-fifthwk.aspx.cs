@@ -60,6 +60,9 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
             return;
         }
 
+        DayGroups.Clear();
+        _orderedGames.Clear();
+
         var entriesWithDate = Schedule.fullgameschedule.gameentry
             .Select(entry => new
             {
@@ -82,14 +85,27 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
                 DayName = group.Key.ToString("dddd", CultureInfo.InvariantCulture)
             };
 
-            foreach (var item in group.OrderBy(x => x.Entry.time))
+            var orderedGames = group
+                .Select(item => new
+                {
+                    item.Entry,
+                    Score = FindGameScore(client, item.Entry, group.Key),
+                    SortKey = GetScheduledDateTime(item.Entry, group.Key)
+                })
+                .OrderBy(x => x.SortKey)
+                .ThenBy(x => x.Entry.id, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in orderedGames)
             {
-                var score = FindGameScore(client, item.Entry, group.Key);
-                dayGroup.Games.Add(new GameDisplay(item.Entry, score));
+                var display = new GameDisplay(item.Entry, item.Score);
+                dayGroup.Games.Add(display);
+                _orderedGames.Add(display);
             }
 
             DayGroups.Add(dayGroup);
         }
+
+        NumberOfGames = _orderedGames.Count;
     }
 
     private IReadOnlyList<Gamescore> GetScoresForDate(WebClient client, DateTime date)
@@ -155,7 +171,7 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
 
     private void LoadParticipants()
     {
-        if (Schedule?.fullgameschedule?.gameentry == null || Schedule.fullgameschedule.gameentry.Length == 0)
+        if (_orderedGames.Count == 0 || Schedule?.fullgameschedule?.gameentry == null || Schedule.fullgameschedule.gameentry.Length == 0)
         {
             return;
         }
@@ -177,20 +193,37 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
                         LastName = reader["lastname"].ToString()
                     };
 
-                    var picks = new List<string>();
+                    var picksByGameId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-                    for (int i = 0; i < NumberOfGames; i++)
+                    for (int i = 0; i < Schedule.fullgameschedule.gameentry.Length; i++)
                     {
                         var columnName = $"game{i + 1}";
                         var pickValue = HasColumn(reader, columnName) ? reader[columnName].ToString() : string.Empty;
-                        picks.Add(pickValue);
-
                         var scheduleEntry = Schedule.fullgameschedule.gameentry[i];
-                        _scoresByGameId.TryGetValue(scheduleEntry.id, out var gameScore);
-                        participant.Picks.Add(BuildPickResult(pickValue, scheduleEntry, gameScore));
+
+                        if (!string.IsNullOrWhiteSpace(scheduleEntry?.id) && !picksByGameId.ContainsKey(scheduleEntry.id))
+                        {
+                            picksByGameId[scheduleEntry.id] = pickValue;
+                        }
                     }
 
-                    participant.WeeklyScore = CalculateScore(picks);
+                    var orderedPickValues = new List<string>();
+
+                    foreach (var game in _orderedGames)
+                    {
+                        var pickValue = string.Empty;
+                        if (!string.IsNullOrWhiteSpace(game?.Schedule?.id) && picksByGameId.TryGetValue(game.Schedule.id, out var mappedPick))
+                        {
+                            pickValue = mappedPick;
+                        }
+
+                        orderedPickValues.Add(pickValue);
+
+                        _scoresByGameId.TryGetValue(game.Schedule.id, out var gameScore);
+                        participant.Picks.Add(BuildPickResult(pickValue, game.Schedule, gameScore));
+                    }
+
+                    participant.WeeklyScore = CalculateScore(orderedPickValues);
                     participant.YtdTotal = FindYtdTotal(participant.FirstName, participant.LastName);
 
                     Participants.Add(participant);
@@ -210,9 +243,9 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
     {
         int score = 0;
 
-        for (int i = 0; i < picks.Count && i < NumberOfGames; i++)
+        for (int i = 0; i < picks.Count && i < _orderedGames.Count; i++)
         {
-            var scheduleEntry = Schedule.fullgameschedule.gameentry[i];
+            var scheduleEntry = _orderedGames[i].Schedule;
             if (!_scoresByGameId.TryGetValue(scheduleEntry.id, out var gameScore))
             {
                 continue;
@@ -403,6 +436,42 @@ public partial class _2025_05_alt_fifthwk : System.Web.UI.Page
         }
 
         return AutoWinDays.Contains(gameDate.Value.DayOfWeek);
+    }
+
+    private static DateTime GetScheduledDateTime(Gameentry scheduleEntry, DateTime fallbackDate)
+    {
+        var parsedDate = ParseDate(scheduleEntry?.date);
+        var baseDate = parsedDate?.Date ?? fallbackDate.Date;
+        var parsedTime = ParseTime(scheduleEntry?.time);
+
+        return parsedTime.HasValue ? baseDate.Add(parsedTime.Value) : (parsedDate ?? baseDate);
+    }
+
+    private static TimeSpan? ParseTime(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var trimmed = value.Trim();
+
+        if (DateTime.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsedInvariant))
+        {
+            return parsedInvariant.TimeOfDay;
+        }
+
+        if (DateTime.TryParse(trimmed, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AllowWhiteSpaces, out var parsedUs))
+        {
+            return parsedUs.TimeOfDay;
+        }
+
+        if (TimeSpan.TryParse(trimmed, CultureInfo.InvariantCulture, out var parsedTimeSpan))
+        {
+            return parsedTimeSpan;
+        }
+
+        return null;
     }
 
     public class DayGroup
