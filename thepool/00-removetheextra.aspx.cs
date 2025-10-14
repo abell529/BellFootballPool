@@ -37,7 +37,7 @@ public partial class _00_removetheextra : System.Web.UI.Page
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
             connection.Open();
-            string query = "SELECT id, firstname, lastname FROM four2025 ORDER BY UPPER(lastname), UPPER(firstname)";
+            string query = "SELECT id, firstname, lastname FROM six2025 ORDER BY UPPER(lastname), UPPER(firstname)";
             MySqlCommand cmd = new MySqlCommand(query, connection);
             MySqlDataReader reader = cmd.ExecuteReader();
 
@@ -90,7 +90,7 @@ public partial class _00_removetheextra : System.Web.UI.Page
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
             connection.Open();
-            string deleteQuery = "DELETE FROM four2025 WHERE id = @id";
+            string deleteQuery = "DELETE FROM six2025 WHERE id = @id";
             MySqlCommand cmd = new MySqlCommand(deleteQuery, connection);
             cmd.Parameters.AddWithValue("@id", id);
 
