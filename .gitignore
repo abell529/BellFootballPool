@@ -5,8 +5,9 @@
 *.vs
 
 # Build output
-Bin/
-thepool/Bin/
+/Bin/
+thepool/Bin/*
+!thepool/Bin/*.refresh
 obj/
 
 # NuGet packages
