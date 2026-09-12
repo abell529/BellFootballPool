@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\2026",
     "\\App_Data",
-    "\\thepool"
+    "\\thepool",
+    "\\thepool\\2025"
   ],
-  "SelectedNode": "\\thepool\\Default.aspx.cs",
   "PreviewInSolutionExplorer": false
 }
