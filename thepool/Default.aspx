@@ -163,7 +163,7 @@
               <h1 class="animate__animated animate__fadeInRight animate__slow animate__delay-500ms">
                   
                   
-                  <span>Picks for <strong><br>Week 6 2025</strong></span></h1>
+                  <span>Picks for <strong><br>Week 18 2025</strong></span></h1>
 
 
               <!--<p class="subhead animate__animated animate__fadeIn animate__slower animate__delay-2s">Start making your picks today on the updated site</p>

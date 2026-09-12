@@ -22,7 +22,7 @@ using MySql.Data.MySqlClient;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public string urlwk1 = $"{CredentialStore.ApiBaseUrl}/2025-regular/full_game_schedule.json?date=from-20251009-to-20251013";
+    public string urlwk1 = $"{CredentialStore.ApiBaseUrl}/2025-regular/full_game_schedule.json?date=from-20260103-to-20260104";
     // public string urlts = $"{CredentialStore.ApiBaseUrl}/2020-2021-regular/overall_team_standings.json";
 
     public int numberofgames;
@@ -295,7 +295,7 @@ public partial class _Default : System.Web.UI.Page
 
             // Use parameterized query to prevent SQL injection
             MySqlCommand cmd = new MySqlCommand(
-                "INSERT INTO six2025 (firstname, lastname, email, game1, game2, game3, game4, game5, game6, game7, game8, game9, game10, game11, game12, game13, game14, game15, game16) " +
+                "INSERT INTO eighteen2025 (firstname, lastname, email, game1, game2, game3, game4, game5, game6, game7, game8, game9, game10, game11, game12, game13, game14, game15, game16) " +
                 "VALUES (@firstname, @lastname, @email, @game1, @game2, @game3, @game4, @game5, @game6, @game7, @game8, @game9, @game10, @game11, @game12, @game13, @game14, @game15, @game16)", connection);
 
             // Add parameters
@@ -323,7 +323,7 @@ public partial class _Default : System.Web.UI.Page
 
             successText = "Data saved successfully!";
             SendMail();
-            Response.Redirect("/football/thepool/2025/06-sixthwk.aspx");
+            Response.Redirect("/football/thepool/2025/18-newyear26.aspx");
         }
         catch (Exception ex)
         {
@@ -354,8 +354,8 @@ public partial class _Default : System.Web.UI.Page
         //Password of your gmail address
         var fromPassword = CredentialStore.EmailPassword;
         // Passing the values and make a email formate to display
-        string subject = "Week 6 - 2025 Football Picks";
-        string body = firstnameText + " " + lastnameText +" picks for week 6: \n\n";
+        string subject = "Week 18 - 2025 Football Picks";
+        string body = firstnameText + " " + lastnameText +" picks for week 18: \n\n";
 
         string[] gamePicksArray = gamePicks.ToArray();
 
@@ -363,7 +363,7 @@ public partial class _Default : System.Web.UI.Page
         {
             body += showall.fullgameschedule.gameentry[i].awayTeam.Abbreviation + " vs. " + showall.fullgameschedule.gameentry[i].homeTeam.Abbreviation + ": " + gamePicksArray[i] + "\n";
         }
-        body += $"\n Picks Link: {CredentialStore.BaseUrl}/football/thepool/2025/06-sixthwk.aspx \n";
+        body += $"\n Picks Link: {CredentialStore.BaseUrl}/football/thepool/2025/18-newyear26.aspx \n";
         // body += "Subject: " + YourSubject.Text + "\n";
         // body += "Question: \n" + Comments.Text + "\n";
         // smtp settings
@@ -382,7 +382,7 @@ public partial class _Default : System.Web.UI.Page
 
     private CredentialCache GetCredential()
     {
-        string url = $"{CredentialStore.ApiBaseUrl}/2025-regular/full_game_schedule.json?date=from-20251009-to-20251013";
+        string url = $"{CredentialStore.ApiBaseUrl}/2025-regular/full_game_schedule.json?date=from-20260103-to-20260104";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;
         CredentialCache credentialCache = new CredentialCache();
         credentialCache.Add(new System.Uri(url), "Basic", CredentialStore.ApiCredential);
