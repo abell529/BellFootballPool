@@ -24,3 +24,6 @@ thepool/website.publishproj
 # Sensitive local configs
 thepool/Web.config
 thepool/Web.Debug.config
+
+# Claude Code local settings (preview launch config, not part of the site)
+.claude/
