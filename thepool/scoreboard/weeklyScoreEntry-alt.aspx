@@ -1,8 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="weeklyScoreEntry.aspx.cs" Inherits="scoreboard_weeklyScoreEntry" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="weeklyScoreEntry-alt.aspx.cs" Inherits="scoreboard_weeklyScoreEntryAlt" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>2026 Weekly Score Entry</title>
+    <title>2026 Weekly Score Entry (alt)</title>
     <style type="text/css">
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -104,7 +104,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <h1>2026 Weekly Score Entry</h1>
+        <h1>2026 Weekly Score Entry (alt: pre-Sunday games handled separately)</h1>
         <div class="form-container">
             <div class="form-row">
                 <label for="WeekNumberTextBox">Week number</label>
@@ -121,6 +121,13 @@
             <div class="form-row">
                 <label for="EndDateTextBox">Schedule end date (YYYY-MM-DD)</label>
                 <asp:TextBox runat="server" ID="EndDateTextBox" />
+            </div>
+            <div class="form-row">
+                <label for="EarlyModeList">Pre-Sunday games (Wednesday through Saturday)</label>
+                <asp:DropDownList runat="server" ID="EarlyModeList">
+                    <asp:ListItem Value="skip" Text="Do not count (0 points for everyone)" Selected="True" />
+                    <asp:ListItem Value="free" Text="Free win for everyone who has a pick in that game" />
+                </asp:DropDownList>
             </div>
             <div class="form-actions">
                 <asp:Button runat="server" ID="LoadButton" Text="Load week data" OnClick="LoadButton_Click" />

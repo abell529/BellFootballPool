@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using nflgames;
 using livescoring;
 
-public partial class scoreboard_weeklyScoreEntry : Page
+public partial class scoreboard_weeklyScoreEntryAlt : Page
 {
     private const string SeasonSegment = "2026-regular";
     private const string ScoresTableName = "`2026`";
@@ -18,20 +18,30 @@ public partial class scoreboard_weeklyScoreEntry : Page
     private const string WeekColumnViewStateKey = "WeekColumnName";
     private const string WeekNumberViewStateKey = "WeekNumber";
 
-    private static readonly DayOfWeek[] AutoWinDays =
+    // Alt page: games played before Sunday are handled by the "Pre-Sunday games" dropdown
+    // instead of being scored as normal picks. weeklyScoreEntry.aspx is the normal page.
+    private static readonly DayOfWeek[] EarlyGameDays =
     {
-        // Empty from week 2 on: pre-Sunday games are picked on thursday-picks.aspx and score like any other game.
-        // Week 1 was scored with Wednesday through Saturday as automatic wins.
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday
     };
+
+    private enum EarlyGameMode
+    {
+        NotCounted,
+        FreeWin
+    }
 
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
-            WeekNumberTextBox.Text = "4";
-            PicksTableTextBox.Text = "four2026";
-            StartDateTextBox.Text = "2026-10-01";
-            EndDateTextBox.Text = "2026-10-05";
+            WeekNumberTextBox.Text = "1";
+            PicksTableTextBox.Text = "one2026";
+            StartDateTextBox.Text = "2026-09-09";
+            EndDateTextBox.Text = "2026-09-14";
         }
     }
 
@@ -64,7 +74,15 @@ public partial class scoreboard_weeklyScoreEntry : Page
             var participants = LoadPicks(inputs.PicksTableName, entries.Length);
             var scoreboardTotals = LoadScoreboardTotals(inputs.WeekNumber);
 
-            var participantScores = BuildParticipantScores(entries, scoresByGameId, participants, scoreboardTotals, inputs.WeekNumber);
+            var earlyMode = EarlyModeList.SelectedValue == "free" ? EarlyGameMode.FreeWin : EarlyGameMode.NotCounted;
+            int earlyGames = entries.Count(IsEarlyGame);
+            string earlyNote = earlyGames == 0
+                ? " There are no pre-Sunday games in this date range."
+                : earlyMode == EarlyGameMode.FreeWin
+                    ? $" {earlyGames} pre-Sunday game(s) counted as a free win for everyone with a pick in that game."
+                    : $" {earlyGames} pre-Sunday game(s) not counted.";
+
+            var participantScores = BuildParticipantScores(entries, scoresByGameId, participants, scoreboardTotals, inputs.WeekNumber, earlyMode);
 
             ViewState[ParticipantScoresViewStateKey] = participantScores;
             ViewState[WeekColumnViewStateKey] = $"week{inputs.WeekNumber}";
@@ -83,7 +101,7 @@ public partial class scoreboard_weeklyScoreEntry : Page
             }
             else
             {
-                ShowSuccess($"Loaded {participantScores.Count} participant scores for week {inputs.WeekNumber}.");
+                ShowSuccess($"Loaded {participantScores.Count} participant scores for week {inputs.WeekNumber}.{earlyNote}");
             }
         }
         catch (Exception ex)
@@ -353,13 +371,14 @@ public partial class scoreboard_weeklyScoreEntry : Page
         IDictionary<string, Gamescore> scoresByGameId,
         IEnumerable<ParticipantPicks> participants,
         IReadOnlyDictionary<string, ScoreboardEntry> scoreboardTotals,
-        int weekNumber)
+        int weekNumber,
+        EarlyGameMode earlyMode)
     {
         var results = new List<ParticipantScore>();
 
         foreach (var participant in participants)
         {
-            var weeklyScore = CalculateScore(scheduleEntries, scoresByGameId, participant.Picks);
+            var weeklyScore = CalculateScore(scheduleEntries, scoresByGameId, participant.Picks, earlyMode);
             var key = BuildParticipantKey(participant.FirstName, participant.LastName);
             scoreboardTotals.TryGetValue(key, out var scoreboardEntry);
 
@@ -384,7 +403,7 @@ public partial class scoreboard_weeklyScoreEntry : Page
         return results;
     }
 
-    private static int CalculateScore(Gameentry[] scheduleEntries, IDictionary<string, Gamescore> scoresByGameId, IList<string> picks)
+    private static int CalculateScore(Gameentry[] scheduleEntries, IDictionary<string, Gamescore> scoresByGameId, IList<string> picks, EarlyGameMode earlyMode)
     {
         int score = 0;
 
@@ -392,6 +411,12 @@ public partial class scoreboard_weeklyScoreEntry : Page
         {
             var scheduleEntry = scheduleEntries[i];
             if (scheduleEntry == null || string.IsNullOrEmpty(scheduleEntry.id))
+            {
+                continue;
+            }
+
+            bool isEarlyGame = IsEarlyGame(scheduleEntry);
+            if (isEarlyGame && earlyMode == EarlyGameMode.NotCounted)
             {
                 continue;
             }
@@ -412,7 +437,7 @@ public partial class scoreboard_weeklyScoreEntry : Page
                 continue;
             }
 
-            if (IsAutoWinGame(scheduleEntry))
+            if (isEarlyGame)
             {
                 score++;
                 continue;
@@ -493,10 +518,10 @@ public partial class scoreboard_weeklyScoreEntry : Page
         StatusMessage.Text = string.Empty;
     }
 
-    private static bool IsAutoWinGame(Gameentry scheduleEntry)
+    private static bool IsEarlyGame(Gameentry scheduleEntry)
     {
         var date = ParseDate(scheduleEntry?.date);
-        return date.HasValue && AutoWinDays.Contains(date.Value.DayOfWeek);
+        return date.HasValue && EarlyGameDays.Contains(date.Value.DayOfWeek);
     }
 
     private static DateTime? ParseDate(string value)

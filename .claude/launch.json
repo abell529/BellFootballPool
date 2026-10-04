@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pool-live-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/Users/andyb/AppData/Local/Temp/claude/C--Users-andyb-source-repos-BellFootballPool/422ce02f-1eeb-44a1-93b9-5834e47ca3e2/scratchpad/harness/serve.js"
+      ],
+      "port": 5177
+    }
+  ]
+}

@@ -9,11 +9,11 @@ using Newtonsoft.Json;
 using nflgames;
 using livescoring;
 
-public partial class _2026_01_first_week_2026 : System.Web.UI.Page
+public partial class _2026_02_week2_26 : System.Web.UI.Page
 {
     private const string SeasonSegment = "2026-regular";
 
-    public string ScheduleUrl = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/full_game_schedule.json?date=from-20260909-to-20260914";
+    public string ScheduleUrl = $"{CredentialStore.ApiBaseUrl}/{SeasonSegment}/full_game_schedule.json?date=from-20260917-to-20260921";
 
     public NFLschedule Schedule { get; private set; }
     public List<DayGroup> DayGroups { get; } = new List<DayGroup>();
@@ -212,7 +212,7 @@ public partial class _2026_01_first_week_2026 : System.Web.UI.Page
         using (var conn = new MySqlConnection(connectionString))
         {
             conn.Open();
-            var commandText = "SELECT * FROM `one2026` ORDER BY UPPER(lastname), UPPER(firstname)";
+            var commandText = "SELECT * FROM `two2026` ORDER BY UPPER(lastname), UPPER(firstname)";
             using (var command = new MySqlCommand(commandText, conn))
             using (var reader = command.ExecuteReader())
             {
@@ -265,10 +265,7 @@ public partial class _2026_01_first_week_2026 : System.Web.UI.Page
 
     private static readonly DayOfWeek[] AutoWinDays =
     {
-        DayOfWeek.Wednesday,
-        DayOfWeek.Thursday,
-        DayOfWeek.Friday,
-        DayOfWeek.Saturday
+        // Empty from week 2 on: pre-Sunday games are picked on thursday-picks.aspx and score like any other game.
     };
 
     private int CalculateScore(IReadOnlyList<string> picks)

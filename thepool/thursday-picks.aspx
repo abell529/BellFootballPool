@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Debug="true" Inherits="_Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="thursday-picks.aspx.cs" Debug="true" Inherits="_ThursdayPicks" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -163,7 +163,7 @@
               <h1 class="animate__animated animate__fadeInRight animate__slow animate__delay-500ms">
                   
                   
-                  <span>Picks for <strong><br><%= CurrentWeek.Label %></strong></span></h1>
+                  <span>Thursday Picks for <strong><br><%= CurrentWeek.Label %></strong></span></h1>
 
 
               <!--<p class="subhead animate__animated animate__fadeIn animate__slower animate__delay-2s">Start making your picks today on the updated site</p>
@@ -183,18 +183,18 @@
 
 
                           <form id="form1" runat="server">
-<% if (CurrentWeek.PicksClosed) { %>
-<p class="closed-note"><strong>Picks for <%= CurrentWeek.Label %> are closed.</strong> They were due by <%= CurrentWeek.PicksCloseText %>. See <a href="<%= CurrentWeek.ResultsPage %>">everyone's picks and the results</a>.</p>
+<% if (Submitted) { %>
+<div class="thank-you">
+<h2>Thank you, <%= Server.HtmlEncode(firstnameText + " " + lastnameText) %>!</h2>
+<p>Your Thursday pick has been saved. Come back before Sunday to pick the rest of the week on the <a href="Default.aspx">main picks page</a>, using the same first and last name.</p>
+<p><a href="/football/">Back to the Football Pool page</a></p>
+</div>
+<% } else if (CurrentWeek.EarlyPicksClosed) { %>
+<p class="closed-note"><strong>The Thursday game is closed.</strong> Picks for it were due by <%= CurrentWeek.EarlyPicksCloseText %>.</p>
+<p>You can still make the rest of your picks for the week on the <a href="Default.aspx">main picks page</a>.</p>
+<p><a href="/football/">Back to the Football Pool page</a></p>
 <% } else { %>
-                    
-
-                        <% if (earlyGameCount > 0) { %>
-                    
-
-                        <% if (CurrentWeek.EarlyPicksClosed) { %><p class="early-note"><strong>The Thursday game is closed.</strong> Picks for it were due by <%= CurrentWeek.EarlyPicksCloseText %>. The rest of the week is below.</p><% } else { %><p class="early-note"><strong>The Thursday game is picked separately</strong> on the <a href="thursday-picks.aspx">Thursday picks page</a> until <%= CurrentWeek.EarlyPicksCloseText %>. Use the same first and last name on both pages so your picks land together.</p><% } %>
-                    
-
-                        <% } %>
+<% if (earlyGameCount == 0) { %><p>There are no games before Sunday this week. Head to the <a href="Default.aspx">main picks page</a>.</p><% } else { %><p>Pick the game(s) played before Sunday here, by <%= CurrentWeek.EarlyPicksCloseText %>. Enter your name exactly the way you will on the main picks page.</p><% } %>
                     
 
                         <div id="the_games_list">
@@ -202,7 +202,7 @@
 
                             <% for (int i = 0; i < numberofgames; i++)
                                 {
-                                    if (ScheduleHelper.IsEarlyGame(showall.fullgameschedule.gameentry[i])) { continue; }
+                                    if (!ScheduleHelper.IsEarlyGame(showall.fullgameschedule.gameentry[i])) { continue; }
                                     Response.Write("<script>");
                                     Response.Write("jQuery(function ($) {");
 
@@ -308,13 +308,9 @@
                                   Last Name: <asp:TextBox runat="server" type="text" name="lastnameEntry" id="lastnameEntry"  />
 
                         </p>
-                              <p>
-                                  E-mail: <asp:TextBox runat="server" type="text" name="emailEntry" id="emailEntry"  />
-
-                        </p>
                            </div>
                            <p>
-                              <asp:Button runat="server" id="SubmitButton" text="Submit Picks" onclick="SubmitForm" />
+                              <asp:Button runat="server" id="SubmitButton" text="Submit Thursday Pick" onclick="SubmitForm" />
 
                     </p>
                     
@@ -343,7 +339,7 @@
 
         <% for (int i = 0; i < numberofgames; i++)
             {
-                if (ScheduleHelper.IsEarlyGame(showall.fullgameschedule.gameentry[i])) { continue; }
+                if (!ScheduleHelper.IsEarlyGame(showall.fullgameschedule.gameentry[i])) { continue; }
 
                 Response.Write("<div class='detailstext " + showall.fullgameschedule.gameentry[i].awayTeam.Abbreviation + "info hidden' style='padding-top: 20px'>");
                 Response.Write("<div class='logo' style='float: left; padding-right: 15px; '>");
@@ -418,49 +414,6 @@
             %>
 
     </div>
-    <div id="MusicBox" class="clearfix">
-        <audio controls autoplay>
-            <source src="assets/music/fox.mp3" type="audio/mpeg" /> Your browser does not support the audio element.
-
-        </audio>
-
-    </div>
-    <div id="Standings" class="clearfix">
-        <p id="standingstext" style="line-height:20px;">
-            <b><%= CurrentWeek.StandingsLabel %></b>
-            <br /><br />
-            <%
-                 //for (int i = 0; i < 15; i++)
-                 //{
-                 //Response.Write(theFirstName);
-                 //}
-
-
-                
-                //Use this below here
-                string[] theFirstNamelist = theFirstName.ToArray();
-                string[] theLastNamelist = theLastName.ToArray();
-                string[] theTotallist = theTotal.ToArray();
-
-                for (int i = 0; i < Math.Min(16, theFirstNamelist.Length); i++)
-                {
-                    Response.Write(theFirstNamelist[i] + " " + theLastNamelist[i] + ": " + theTotallist[i] + "<br />");
-                }
-                
-
-
-
-
-                 //foreach (var item in theFirstName)
-                 //{
-                  //  Response.Write(item + "<br />");
-                 //}
-
-
-                %>
-            </p>
-          
-              </div>
                <p>&nbsp;</p>
                </div>
          </section>
