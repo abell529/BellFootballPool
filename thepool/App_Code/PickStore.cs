@@ -22,6 +22,13 @@ public static class PickStore
     /// </summary>
     public static bool SavePicks(string firstName, string lastName, string email, IDictionary<int, string> picksByColumn)
     {
+        return SavePicks(CurrentWeek.PicksTable, firstName, lastName, email, picksByColumn);
+    }
+
+    /// <summary>Same as SavePicks, for a week other than the current one (admin entry of late picks).</summary>
+    public static bool SavePicks(string table, string firstName, string lastName, string email, IDictionary<int, string> picksByColumn)
+    {
+        RequireSafeTable(table);
         firstName = (firstName ?? string.Empty).Trim();
         lastName = (lastName ?? string.Empty).Trim();
 
@@ -29,7 +36,7 @@ public static class PickStore
         {
             conn.Open();
 
-            var existingId = FindRowId(conn, firstName, lastName);
+            var existingId = FindRowId(conn, table, firstName, lastName);
 
             if (existingId.HasValue)
             {
@@ -48,7 +55,7 @@ public static class PickStore
                     return true;
                 }
 
-                using (var cmd = new MySqlCommand($"UPDATE `{CurrentWeek.PicksTable}` SET {string.Join(", ", sets)} WHERE id = @id", conn))
+                using (var cmd = new MySqlCommand($"UPDATE `{table}` SET {string.Join(", ", sets)} WHERE id = @id", conn))
                 {
                     cmd.Parameters.AddWithValue("@id", existingId.Value);
                     if (email != null)
@@ -73,7 +80,7 @@ public static class PickStore
                 values.Add($"@game{column}");
             }
 
-            using (var cmd = new MySqlCommand($"INSERT INTO `{CurrentWeek.PicksTable}` ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})", conn))
+            using (var cmd = new MySqlCommand($"INSERT INTO `{table}` ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})", conn))
             {
                 cmd.Parameters.AddWithValue("@firstname", firstName);
                 cmd.Parameters.AddWithValue("@lastname", lastName);
@@ -94,13 +101,20 @@ public static class PickStore
     /// <summary>All picks stored for this name, keyed by column number. Empty if there is no row yet.</summary>
     public static Dictionary<int, string> GetPicks(string firstName, string lastName)
     {
+        return GetPicks(CurrentWeek.PicksTable, firstName, lastName);
+    }
+
+    /// <summary>Same as GetPicks, for a week other than the current one.</summary>
+    public static Dictionary<int, string> GetPicks(string table, string firstName, string lastName)
+    {
+        RequireSafeTable(table);
         var picks = new Dictionary<int, string>();
 
         using (var conn = new MySqlConnection(CredentialStore.PoolConnectionString))
         {
             conn.Open();
 
-            using (var cmd = new MySqlCommand($"SELECT * FROM `{CurrentWeek.PicksTable}` WHERE {NameMatch} ORDER BY id LIMIT 1", conn))
+            using (var cmd = new MySqlCommand($"SELECT * FROM `{table}` WHERE {NameMatch} ORDER BY id LIMIT 1", conn))
             {
                 AddNameParameters(cmd, firstName, lastName);
                 using (var reader = cmd.ExecuteReader())
@@ -128,9 +142,17 @@ public static class PickStore
         return picks;
     }
 
-    private static long? FindRowId(MySqlConnection conn, string firstName, string lastName)
+    private static void RequireSafeTable(string table)
     {
-        using (var cmd = new MySqlCommand($"SELECT id FROM `{CurrentWeek.PicksTable}` WHERE {NameMatch} ORDER BY id LIMIT 1", conn))
+        if (string.IsNullOrEmpty(table) || !System.Text.RegularExpressions.Regex.IsMatch(table, "^[A-Za-z0-9_]+$"))
+        {
+            throw new ArgumentException("Unsafe table name: " + table);
+        }
+    }
+
+    private static long? FindRowId(MySqlConnection conn, string table, string firstName, string lastName)
+    {
+        using (var cmd = new MySqlCommand($"SELECT id FROM `{table}` WHERE {NameMatch} ORDER BY id LIMIT 1", conn))
         {
             AddNameParameters(cmd, firstName, lastName);
             var result = cmd.ExecuteScalar();

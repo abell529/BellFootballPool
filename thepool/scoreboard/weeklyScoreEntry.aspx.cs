@@ -28,10 +28,10 @@ public partial class scoreboard_weeklyScoreEntry : Page
     {
         if (!IsPostBack)
         {
-            WeekNumberTextBox.Text = "5";
-            PicksTableTextBox.Text = "five2026";
-            StartDateTextBox.Text = "2026-10-08";
-            EndDateTextBox.Text = "2026-10-12";
+            WeekNumberTextBox.Text = "7";
+            PicksTableTextBox.Text = "seven2026";
+            StartDateTextBox.Text = "2026-10-22";
+            EndDateTextBox.Text = "2026-10-26";
         }
     }
 

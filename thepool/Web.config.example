@@ -16,6 +16,8 @@
     <add key="ApiBaseUrl" value="REPLACE_WITH_https://api.website.com/v1.1/pull/nfl" />
     <add key="ApiBaseUrlV2" value="REPLACE_WITH_https://api.website.com/v2.1/pull/nfl" />
     <add key="SmtpHost" value="REPLACE_WITH_mail16.website.com" />
+    <!-- Optional: when set, admin-entry.aspx only works with ?key=THIS_VALUE on the address -->
+    <add key="AdminKey" value="REPLACE_WITH_A_SECRET_WORD" />
   </appSettings>
   <system.web>
     <compilation targetFramework="4.5.2" debug="true">
